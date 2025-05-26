@@ -1,4 +1,22 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'fatafatsewa.com',
+        pathname: '/storage/**',
+      },
+    ],
+  },
+  experimental: {
+    turbo: {
+      rules: {
+        // Enable PostCSS processing
+        '*.css': ['postcss-loader'],
+      },
+    },
+  },
+}
 
-export default nextConfig;
+export default nextConfig
