@@ -6,7 +6,7 @@ import {
   CategoryPanel,
   Popularcategories,
   NewOffers,
-  Articles
+  LatestBlogs
 } from './components/sections'
 import {
   Laptops,
@@ -28,15 +28,12 @@ export default function Home() {
             <MainLayout>
               <Banner />
               <NewArrivals />
-              <CategoryPanel />
-              {/* <Popularcategories /> */}
+              <Popularcategories />
               <Laptops />
               <MobilePhone />
-              <NewOffers />
-              <GamingAccessories2024 />
               <HomeAppliances />
-              
-              <Articles />
+              <LatestBlogs />
+              <GamingAccessories2024 />
             </MainLayout>
           </FavoritesProvider>
         </CartProvider>

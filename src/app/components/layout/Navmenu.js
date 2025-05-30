@@ -32,11 +32,10 @@ const Navmenu = () => {
           <a href='#' className='flex items-center gap-1.5 text-gray-600 hover:text-blue-500 px-4 py-1.5 rounded-full transition-all duration-200 hover:bg-blue-50/70 text-sm hover:scale-105'>
             <FaCalculator className='w-4 h-4' />
             EMI Calculator
-          </a>
-          <a href='#' className='flex items-center gap-1.5 text-gray-600 hover:text-blue-500 px-4 py-1.5 rounded-full transition-all duration-200 hover:bg-blue-50/70 text-sm hover:scale-105'>
+          </a>          <Link href='/blogs' className='flex items-center gap-1.5 text-gray-600 hover:text-blue-500 px-4 py-1.5 rounded-full transition-all duration-200 hover:bg-blue-50/70 text-sm hover:scale-105'>
             <FaBlog className='w-4 h-4' />
             Blogs
-          </a>
+          </Link>
         </div>
       </nav>
 

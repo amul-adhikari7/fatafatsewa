@@ -1,11 +1,12 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 
 const sliderImages = [
   '/assets/home-banner.jpg',
-
-
+  '/assets/home-banner-2.webp',
+  '/assets/home-banner-3.webp',
 ]
 
 const staticImages = [
@@ -24,91 +25,99 @@ const Banner = () => {
     return () => clearInterval(interval)
   }, [])    
 
+  const nextSlide = () => {
+    setCurrent((prev) => (prev + 1) % sliderImages.length)
+  }
+
+  const prevSlide = () => {
+    setCurrent((prev) => (prev === 0 ? sliderImages.length - 1 : prev - 1))
+  }
+
   return (
-    <section className="w-full ">
-      <div className="grid grid-cols-5 grid-rows-5 gap-4 w-full min-h-[500px] px-4 md:px-8 lg:px-12">
-        {/* Left slider */}
-        <div className="col-span-3 row-span-5 relative overflow-hidden shadow-lg">
-          <div
-            className="flex w-full h-full transition-transform duration-700 ease-out"
-            style={{ transform: `translateX(-${current * 100}%)` }}
-          >
-            {sliderImages.map((img, idx) => (
-              <div key={img} className="relative w-full  h-full flex-shrink-0 bg-white ">
-                <Image
-                  src={img}
-                  alt={`Slider ${idx + 1}`}
-                  fill
-                  sizes="100vw"
-                  className="object-fill"
-                  priority={idx === 0}
-                  quality={90}
+    <section className="w-full p-4">
+      <div className="max-w-[1920px] mx-auto">
+        <div className="grid grid-cols-[60fr_40fr] gap-4">
+          {/* Left large banner (1) */}
+          <div className="relative h-[500px] group">
+            <div className="flex w-full h-full transition-transform duration-700 ease-out overflow-hidden"
+                style={{ transform: `translateX(-${current * 100}%)` }}>
+              {sliderImages.map((img, idx) => (
+                <div key={img} className="relative w-full h-full flex-shrink-0">
+                  <Image
+                    src={img}
+                    alt={`Slider ${idx + 1}`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 60vw"
+                    className="object-cover rounded-lg"
+                    priority={idx === 0}
+                  />
+                </div>
+              ))}
+            </div>
+            {/* Navigation Buttons */}
+            <button
+              onClick={prevSlide}
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
+              aria-label="Previous slide"
+            >
+              <FaChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
+              aria-label="Next slide"
+            >
+              <FaChevronRight className="w-4 h-4" />
+            </button>
+            {/* Slide indicators */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+              {sliderImages.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrent(idx)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all ${
+                    current === idx ? 'bg-white scale-125' : 'bg-white/50'
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
-          {/* Arrows */}
-          <button
-            onClick={() => setCurrent(prev => (prev - 1 + sliderImages.length) % sliderImages.length)}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/30 backdrop-blur hover:bg-white/50 flex items-center justify-center"
-          >
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button
-            onClick={() => setCurrent(prev => (prev + 1) % sliderImages.length)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/30 backdrop-blur hover:bg-white/50 flex items-center justify-center"
-          >
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-
-          {/* Dots */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-            {sliderImages.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrent(idx)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  current === idx ? 'w-6 bg-white' : 'bg-white/50 hover:bg-white/75'
-                }`}
+          {/* Right banners container (2,3,4) */}
+          <div className="grid grid-rows-[1fr_1fr] gap-4">
+            {/* Top banner (2) */}
+            <div className="relative h-[240px]">
+              <Image
+                src={staticImages[0]}
+                alt="Top Banner"
+                fill
+                sizes="(max-width: 768px) 100vw, 40vw"
+                className="object-cover rounded-lg"
               />
-            ))}
+            </div>
+            {/* Bottom two banners (3,4) */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="relative h-[240px]">
+                <Image
+                  src={staticImages[1]}
+                  alt="Bottom Left Banner"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 20vw"
+                  className="object-cover rounded-lg"
+                />
+              </div>
+              <div className="relative h-[240px]">
+                <Image
+                  src={staticImages[2]}
+                  alt="Bottom Right Banner"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 20vw"
+                  className="object-cover rounded-lg"
+                />
+              </div>
+            </div>
           </div>
-        </div>
-
-        {/* Top right image */}
-        <div className="col-start-4 col-span-2 row-span-3 relative overflow-hidden shadow-md">
-          <Image
-            src={staticImages[0]}
-            alt="Side Image 1"
-            fill
-            className="object-fill "
-          />
-        </div>
-
-        {/* Bottom right left image */}
-        <div className="col-start-4 row-start-4 row-span-2 relative overflow-hidden shadow-md">
-          <Image
-            src={staticImages[1]}
-            alt="Side Image 2"
-            fill
-            className="object-fill"
-          />
-        </div>
-
-        {/* Bottom right right image */}
-        <div className="col-start-5 row-start-4 row-span-2 relative overflow-hidden shadow-md">
-          <Image
-            src={staticImages[2]}
-            alt="Side Image 3"
-            fill
-            className="object-fill"
-          />
         </div>
       </div>
     </section>

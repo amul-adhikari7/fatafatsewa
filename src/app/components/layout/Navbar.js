@@ -1,6 +1,7 @@
 'use client'
 import React, { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import {
   FaUser,
   FaShoppingCart,
@@ -44,13 +45,15 @@ const Navbar = () => {
           <div className='flex items-center justify-between h-16'>
             {/* Logo */}
             <div className='flex-shrink-0 flex items-center pr-4 md:pr-8 lg:pr-12'>
-              <Image
-                src='/assets/logo.svg'
-                alt='logo'
-                width={120}
-                height={48}
-                className='object-contain'
-              />
+              <Link href="/">
+                <Image
+                  src='/assets/logo.svg'
+                  alt='logo'
+                  width={120}
+                  height={48}
+                  className='object-contain'
+                />
+              </Link>
             </div>
 
             {/* Search bar and icons container */}

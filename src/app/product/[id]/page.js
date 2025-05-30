@@ -2,14 +2,14 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { FaShoppingCart, FaHeart, FaRegHeart, FaTruck } from 'react-icons/fa'
+import { FaShoppingCart, FaHeart, FaRegHeart } from 'react-icons/fa'
 import { useParams } from 'next/navigation'
-import { useCart } from '../../../../components/contexts/CartContext'
-import { useFavorites } from '../../../../components/contexts/FavoritesContext'
-import { useProducts } from '../../../../components/contexts/ProductsContext'
-import { MainLayout } from '../../../../components/layout'
+import { useCart } from '@/app/components/contexts/CartContext'
+import { useFavorites } from '@/app/components/contexts/FavoritesContext'
+import { useProducts } from '@/app/components/contexts/ProductsContext'
+import { MainLayout } from '@/app/components/layout'
 
-const ProductPage = () => {
+export default function ProductPage() {
   const { id } = useParams()
   const { addToCart } = useCart()
   const { toggleFavorite, isFavorite } = useFavorites()
@@ -78,6 +78,20 @@ const ProductPage = () => {
                   </div>
                 )}
               </div>
+              
+              {/* Thumbnail Images */}
+              <div className="grid grid-cols-4 gap-2">
+                {[product.image, product.image, product.image, product.image].map((img, idx) => (
+                  <div key={idx} className="relative aspect-square rounded-lg border hover:border-blue-500 cursor-pointer overflow-hidden">
+                    <Image
+                      src={img}
+                      alt={`${product.name} view ${idx + 1}`}
+                      fill
+                      className="object-contain p-2"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Right Column - Product Info */}
@@ -89,12 +103,15 @@ const ProductPage = () => {
 
               <div className="space-y-2">
                 <div className="text-3xl font-bold text-blue-600">
-                  {product.price}
+                  Rs {product.price.toLocaleString()}
                 </div>
                 {product.oldPrice && (
                   <div className="flex items-center gap-2">
                     <span className="text-gray-500 line-through text-lg">
-                      {product.oldPrice}
+                      Rs {product.oldPrice.toLocaleString()}
+                    </span>
+                    <span className="text-green-600 font-medium">
+                      {Math.round((1 - product.price / product.oldPrice) * 100)}% Off
                     </span>
                   </div>
                 )}
@@ -103,16 +120,8 @@ const ProductPage = () => {
               {/* EMI Options */}
               <div className="bg-blue-50 rounded-xl p-4 space-y-2">
                 <h3 className="font-semibold text-blue-900">EMI Options Available</h3>
+                <p className="text-blue-700 text-2xl font-bold">Rs {Math.ceil(product.price / 12).toLocaleString()} /month</p>
                 <p className="text-sm text-blue-600">Based on 12 months EMI</p>
-                <div className="flex gap-2 text-sm">
-                  <span className="border border-gray-300 text-orange-600 font-bold px-2 py-0.5 rounded-full">
-                    EMI
-                  </span>
-                  <span className="border border-gray-300 text-blue-600 font-bold px-2 py-0.5 rounded-full">
-                    <FaTruck className="inline-block mr-1" />
-                    Fatafat Delivery
-                  </span>
-                </div>
               </div>
 
               {/* Action Buttons */}
@@ -140,9 +149,11 @@ const ProductPage = () => {
               <div className="border-t pt-6 mt-8">
                 <h3 className="font-semibold text-lg mb-4">Key Features</h3>
                 <ul className="space-y-2 text-gray-600">
-                  {(product.features || []).map((feature, index) => (
-                    <li key={index}>• {feature}</li>
-                  ))}
+                  <li>• 6.8&quot; Dynamic AMOLED 2X Display</li>
+                  <li>• 200MP Wide Camera</li>
+                  <li>• 12GB RAM + 256GB Storage</li>
+                  <li>• 5000mAh Battery</li>
+                  <li>• S Pen Included</li>
                 </ul>
               </div>
             </div>
@@ -154,7 +165,11 @@ const ProductPage = () => {
           <h2 className="text-2xl font-bold mb-6">Product Description</h2>
           <div className="prose max-w-none">
             <p className="text-gray-600 leading-relaxed">
-              {product.fullDescription || product.description || 'No description available.'}
+              Experience the power of AI with the Samsung Galaxy S24 Ultra. 
+              Featuring a stunning 6.8-inch QHD+ Dynamic AMOLED 2X display with 
+              adaptive 120Hz refresh rate, this flagship device delivers exceptional 
+              visuals and smooth performance. The advanced quad camera system with 
+              a 200MP main sensor captures incredible details in any lighting condition.
             </p>
           </div>
         </div>
@@ -162,5 +177,3 @@ const ProductPage = () => {
     </MainLayout>
   )
 }
-
-export default ProductPage
