@@ -29,12 +29,13 @@ export default function Home() {
               <Banner />
               <NewArrivals />
               <CategoryPanel />
-              <Popularcategories />
+              {/* <Popularcategories /> */}
               <Laptops />
               <MobilePhone />
+              <NewOffers />
               <GamingAccessories2024 />
               <HomeAppliances />
-              <NewOffers />
+              
               <Articles />
             </MainLayout>
           </FavoritesProvider>

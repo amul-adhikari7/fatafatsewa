@@ -13,23 +13,61 @@ const GamingAccessories2024 = () => {
   useEffect(() => {
     const fetchAccessories = async () => {
       try {
-        // Placeholder data - replace with your actual API call
         const data = [
           {
             id: 1,
-            name: 'Razer DeathAdder V3 Pro',
-            price: 19999,
-            image: '/assets/razer-mouse.jpg',
-            description: 'Professional Gaming Mouse'
+            name: 'Anker Soundcore Strike 1 Gaming Headphones',
+            price: 8999,
+            oldPrice: null,
+            discount: null,
+            tag: 'Fastest Delivery',
+            image: '/assets/headphones.jpg',
           },
           {
             id: 2,
-            name: 'SteelSeries Apex Pro',
-            price: 25000,
-            image: '/assets/steelseries-keyboard.jpg',
-            description: 'Mechanical Gaming Keyboard'
+            name: 'Nintendo Switch - OLED Model White Joy-Con',
+            price: 66499,
+            oldPrice: 98490,
+            discount: '32.6% Off',
+            tag: 'Fastest Delivery',
+            image: '/assets/switch.jpg',
           },
-          // Add more accessories as needed
+          {
+            id: 3,
+            name: 'Fantech Raigor II Wg10 Gaming Mouse in Red',
+            price: 999,
+            oldPrice: null,
+            discount: null,
+            tag: 'New',
+            image: '/assets/fantech-red.jpg',
+          },
+          {
+            id: 4,
+            name: 'Onikuma k9 RGB Stereo Gaming Headsets',
+            price: 3999,
+            oldPrice: null,
+            discount: null,
+            tag: 'New',
+            image: '/assets/onikuma-k9.jpg',
+          },
+          {
+            id: 5,
+            name: 'Fantech Raigor II Wg10 Gaming Mouse in Red & White',
+            price: 999,
+            oldPrice: null,
+            discount: null,
+            tag: 'Out Of Stock',
+            image: '/assets/fantech-blackwhite.jpg',
+          },
+          {
+            id: 6,
+            name: 'Ajazz AK820PRO 75% Gasket Mount Hot Sw...',
+            price: 9999,
+            oldPrice: null,
+            discount: null,
+            tag: 'Out Of Stock',
+            image: '/assets/ajazz-ak820pro.jpg',
+          },
         ]
         setAccessories(data)
         setLoading(false)
@@ -48,39 +86,64 @@ const GamingAccessories2024 = () => {
   return (
     <section className="py-8">
       <div className="container mx-auto px-4">
-        <h2 className="text-2xl font-bold mb-6">Gaming Accessories</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {accessories.map((accessory) => (
-            <div key={accessory.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="relative">
-                {accessory.image && (
-                  <Image
-                    src={accessory.image}
-                    alt={accessory.name}
-                    width={300}
-                    height={200}
-                    className="w-full h-48 object-cover"
-                  />
-                )}
+        <div className="flex items-center justify-between border-b-4 border-orange-500 pb-2">
+          <h2 className="text-2xl font-bold">Gaming Accessories Of 2024</h2>
+          <button className="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm">
+            More Products
+          </button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-6">
+          {accessories.map((item) => (
+            <div key={item.id} className="border rounded-lg p-4 shadow-sm hover:shadow-md transition">
+              {item.discount && (
+                <span className="bg-green-600 text-white text-xs px-2 py-0.5 rounded">
+                  {item.discount}
+                </span>
+              )}
+              {!item.discount && item.tag === 'New' && (
+                <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded">
+                  New
+                </span>
+              )}
+              <div className="relative mt-2">
+                <Image
+                  src={item.image}
+                  alt={item.name}
+                  width={200}
+                  height={150}
+                  className="w-full h-32 object-contain"
+                />
                 <button
-                  onClick={() => toggleFavorite(accessory.id)}
-                  className="absolute top-2 right-2 p-2"
+                  onClick={() => toggleFavorite(item.id)}
+                  className="absolute top-1 right-1 p-1"
                 >
                   <FaHeart
-                    className={`text-xl ${
-                      isFavorite(accessory.id) ? 'text-red-500' : 'text-gray-400'
+                    className={`text-lg ${
+                      isFavorite(item.id) ? 'text-red-500' : 'text-gray-400'
                     }`}
                   />
                 </button>
               </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2">{accessory.name}</h3>
-                <p className="text-gray-600 mb-2">{accessory.description}</p>
-                <p className="text-xl font-bold">Rs. {accessory.price}</p>
-                <button className="mt-3 w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
-                  Add to Cart
-                </button>
-              </div>
+              <h3 className="text-sm font-medium mt-2 mb-1 leading-tight">
+                {item.name}
+              </h3>
+              {item.oldPrice && (
+                <p className="text-gray-500 line-through text-sm">
+                  Rs {item.oldPrice.toLocaleString()}
+                </p>
+              )}
+              <p className="text-blue-600 font-semibold text-lg">
+                Rs {item.price.toLocaleString()}
+              </p>
+              <p
+                className={`mt-1 text-xs px-2 py-0.5 rounded-full inline-block ${
+                  item.tag === 'Out Of Stock'
+                    ? 'bg-red-100 text-red-600 border border-red-300'
+                    : 'bg-blue-100 text-blue-700'
+                }`}
+              >
+                {item.tag}
+              </p>
             </div>
           ))}
         </div>

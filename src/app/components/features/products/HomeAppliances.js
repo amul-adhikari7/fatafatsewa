@@ -1,135 +1,85 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import Image from 'next/image'
-import { FaHeart } from 'react-icons/fa'
-import { useFavorites } from '../../../components/contexts/FavoritesContext'
+import { FaTruck, FaCreditCard } from 'react-icons/fa'
 
-const HomeAppliances = () => {
-  const [appliances, setAppliances] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const { toggleFavorite, isFavorite } = useFavorites()
+const appliances = [
+  {
+    id: 1,
+    title: 'Samsung 253L Double Door Refrigerator',
+    price: 45000,
+    image: '/appliances/fridge.jpg',
+    label: '10% Off'
+  },
+  {
+    id: 2,
+    title: 'LG 7kg Front Load Washing Machine',
+    price: 32000,
+    image: '/appliances/washing-machine.jpg'
+  },
+  {
+    id: 3,
+    title: 'Philips Air Fryer HD9200',
+    price: 11000,
+    image: '/appliances/airfryer.jpg',
+    label: 'New'
+  },
+  {
+    id: 4,
+    title: 'IFB 30L Convection Microwave Oven',
+    price: 17000,
+    image: '/appliances/microwave.jpg'
+  }
+]
 
-  useEffect(() => {
-    const fetchAppliances = async () => {
-      try {
-        // Replace with your actual API endpoint
-        const response = await fetch('/api/products/home-appliances')
-        if (!response.ok) throw new Error('Failed to fetch home appliances')
-        const data = await response.json()
-        setAppliances(data)
-        setLoading(false)
-      } catch (err) {
-        setError(err.message)
-        setLoading(false)
-      }
-    }
-
-    fetchAppliances()
-  }, [])
-
-  if (loading) {
-    return (
-      <section className="py-12 px-4 max-w-7xl mx-auto">
-        <h2 className="text-2xl font-bold mb-8 text-gray-800">Home Appliances</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="animate-pulse">
-              <div className="bg-gray-200 rounded-lg aspect-square mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+const HomeAppliances2024 = () => {
+  return (
+    <section className="py-10 bg-white">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl md:text-2xl font-bold">Home Appliances Of 2024</h2>
+          <button className="text-sm bg-blue-100 text-blue-700 px-4 py-1 rounded-full hover:bg-blue-700 transition-colors shadow">
+             More Products
+          </button>
+        </div>
+        <div className="w-full h-1 bg-orange-500 mb-4 rounded"></div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {appliances.map((item) => (
+            <div
+              key={item.id}
+              className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow border relative h-[360px] flex flex-col"
+            >
+              {item.label && (
+                <span className="absolute top-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
+                  {item.label}
+                </span>
+              )}
+              <div className="relative h-48 w-full">
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  className="object-contain p-2"
+                />
+              </div>
+              <div className="p-2 space-y-1 mt-auto">
+                <h3 className="text-xs font-semibold line-clamp-2">{item.title}</h3>
+                <p className="text-blue-600 font-bold text-xs">Rs {item.price.toLocaleString()}</p>
+                <div className="flex flex-wrap items-center text-[10px] gap-1 text-gray-600">
+                  <div className="flex items-center gap-1">
+                    <FaCreditCard className="text-primary" /> EMI
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <FaTruck className="text-primary" /> Fatafat Delivery
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
-      </section>
-    )
-  }
-
-  if (error) {
-    return (
-      <section className="py-12 px-4 max-w-7xl mx-auto">
-        <h2 className="text-2xl font-bold mb-8 text-gray-800">Home Appliances</h2>
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-          Error: {error}
-        </div>
-      </section>
-    )
-  }
-
-  // For development, using sample data if API is not ready
-  const sampleAppliances = [
-    {
-      id: 1,
-      name: 'Smart Refrigerator Pro',
-      price: 89999,
-      image: '/assets/products/fridge.jpg',
-      description: 'Smart cooling technology with digital display',
-    },
-    {
-      id: 2,
-      name: 'AutoCook Rice Cooker',
-      price: 12999,
-      image: '/assets/products/rice-cooker.jpg',
-      description: '10-cup capacity with multiple cooking modes',
-    },
-    // Add more sample items as needed
-  ]
-
-  const displayAppliances = appliances.length > 0 ? appliances : sampleAppliances
-
-  return (
-    <section className="py-12 px-4 max-w-7xl mx-auto">
-      <h2 className="text-2xl font-bold mb-8 text-gray-800">Home Appliances</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {displayAppliances.map((appliance) => (
-          <div
-            key={appliance.id}
-            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
-          >
-            <div className="relative aspect-square">
-              <Image
-                src={appliance.image}
-                alt={appliance.name}
-                fill
-                className="object-cover"
-              />
-              <button
-                onClick={() => toggleFavorite(appliance)}
-                className={`absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm ${
-                  isFavorite(appliance)
-                    ? 'bg-pink-500 text-white'
-                    : 'bg-white/70 text-gray-600 hover:bg-pink-500 hover:text-white'
-                } transition-colors duration-200`}
-                aria-label={
-                  isFavorite(appliance)
-                    ? 'Remove from favorites'
-                    : 'Add to favorites'
-                }
-              >
-                <FaHeart size={16} />
-              </button>
-            </div>
-            <div className="p-4">
-              <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2">
-                {appliance.name}
-              </h3>
-              <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                {appliance.description}
-              </p>
-              <div className="flex items-center justify-between">
-                <span className="text-lg font-bold text-blue-600">
-                  Rs {appliance.price.toLocaleString()}
-                </span>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors duration-200">
-                  View Details
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
       </div>
     </section>
   )
 }
 
-export default HomeAppliances
+export default HomeAppliances2024
