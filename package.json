@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "dompurify": "^3.2.6",
     "next": "15.3.2",
     "postcss-import": "^16.1.0",
     "postcss-nesting": "^13.0.1",
