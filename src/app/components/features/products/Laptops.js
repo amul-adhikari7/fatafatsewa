@@ -40,6 +40,15 @@ const laptops = [
         oldPrice: 'Rs 89,900',
         image: '/assets/asus-rog-strix.png',
         tag: 'Limited Stock'
+    },
+    {
+        id: 5,
+        name: 'ASUS ROG Strix G513QE',
+        description: 'Ryzen 7 5800H, 16GB RAM, RTX 3050Ti',
+        price: 'Rs 79,900',
+        oldPrice: 'Rs 89,900',
+        image: '/assets/asus-rog-strix.png',
+        tag: 'Limited Stock'
     }
 ]
 
@@ -77,7 +86,7 @@ const LaptopsOf2024 = () => {
                 <div className="h-1 bg-orange-500 w-32 mb-4"></div>
 
                 {/* Product Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
                     {laptops.map((item) => (
                         <div
                             key={item.id}
@@ -147,13 +156,13 @@ const LaptopsOf2024 = () => {
                                         Fatafat Delivery
                                     </span>
                                 </div>
-                                <button
+                                {/* <button
                                     onClick={(e) => handleAddToCart(e, item)}
                                     className="w-full bg-blue-600 text-white text-sm font-semibold px-2 py-1.5 rounded-full hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 mt-2"
                                 >
                                     <FaCartPlus />
                                     Add to Cart
-                                </button>
+                                </button> */}
                             </div>
                         </div>
                     ))}

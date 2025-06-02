@@ -40,6 +40,7 @@ const phones = [
 		badge: '5%',
 		image: '/assets/Iphone-16-pro-max-price-in-nepal.jpg',
 	},
+	
 ]
 
 const MobilePhones2024 = () => {
@@ -181,13 +182,13 @@ const MobilePhones2024 = () => {
 											Fatafat Delivery
 										</span>
 									</div>
-									<button
+									{/* <button
 										onClick={(e) => handleAddToCart(e, item)}
 										className="w-full bg-blue-600 text-white text-sm font-semibold px-2 py-1.5 rounded-full hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 mt-2"
 									>
 										<FaCartPlus />
 										Add to Cart
-									</button>
+									</button> */}
 								</div>
 							</div>
 						))}
