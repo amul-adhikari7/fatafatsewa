@@ -71,13 +71,20 @@ const StickyAddToCart = ({ product, quantity, addToCart, visible }) => {
               Rs {(product.price * quantity).toLocaleString()}
             </p>
           </div>
+        </div>{" "}
+        <div className="flex gap-2">
+          <button
+            onClick={() => addToCart({ ...product, quantity })}
+            className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+            <FaShoppingCart />
+            Add to Cart
+          </button>
+          <button
+            onClick={() => alert("EMI application coming soon!")}
+            className="bg-orange-500 text-white py-2 px-6 rounded-lg hover:bg-orange-600 transition flex items-center gap-2">
+            Apply for EMI
+          </button>
         </div>
-        <button
-          onClick={() => addToCart({ ...product, quantity })}
-          className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
-          <FaShoppingCart />
-          Add to Cart
-        </button>
       </div>
     </div>
   );
@@ -96,6 +103,20 @@ export default function ProductPage() {
   const [showZoom, setShowZoom] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [products, setProducts] = useState([]);
+  const [viewerCount, setViewerCount] = useState(18);
+
+  // Fluctuating viewer count effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setViewerCount((current) => {
+        const change = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+        const newCount = Math.max(15, Math.min(25, current + change)); // Keep between 15 and 25
+        return newCount;
+      });
+    }, 3000); // Update every 3 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -298,6 +319,31 @@ export default function ProductPage() {
                   {product.name}
                 </h1>
                 <p className="text-gray-600">{product.description}</p>
+
+                {/* Product Information */}
+                <div className="mt-4 space-y-2 text-sm">
+                  <div className="flex items-center text-blue-600"></div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-gray-600">SKU:</span>
+                      <span className="ml-2 font-medium">
+                        {product.sku || "N/A"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Brand:</span>
+                      <span className="ml-2 font-medium">
+                        {product.brand || "N/A"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Available Stock:</span>
+                      <span className="ml-2 font-medium">
+                        {product.stock || 2}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Price Section */}
@@ -372,22 +418,37 @@ export default function ProductPage() {
               </div>
 
               {/* Add to Cart Button */}
-              <div className="flex gap-4">
-                <button
-                  onClick={() => addToCart({ ...product, quantity })}
-                  className="flex-1 bg-blue-600 text-white py-4 px-6 rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-2 font-semibold">
-                  <FaShoppingCart />
-                  Add to Cart ({quantity})
-                </button>
-                <button
-                  onClick={() => toggleFavorite(product)}
-                  className={`p-4 rounded-xl border ${
-                    isFavorite(product.id)
-                      ? "bg-pink-50 text-pink-600 border-pink-200"
-                      : "bg-gray-50 text-gray-600 border-gray-200"
-                  }`}>
-                  {isFavorite(product.id) ? <FaHeart /> : <FaRegHeart />}
-                </button>
+              <div className="space-y-4">
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => addToCart({ ...product, quantity })}
+                    className="flex-1 bg-blue-600 text-white py-4 px-6 rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-2 font-semibold">
+                    <FaShoppingCart />
+                    Add to Cart ({quantity})
+                  </button>
+                  <button
+                    onClick={() => alert("EMI application coming soon!")}
+                    className="flex-1 bg-orange-500 text-white py-4 px-6 rounded-xl hover:bg-orange-600 transition flex items-center justify-center gap-2 font-semibold">
+                    Apply for EMI
+                  </button>
+                  <button
+                    onClick={() => toggleFavorite(product)}
+                    className={`p-4 rounded-xl border ${
+                      isFavorite(product.id)
+                        ? "bg-pink-50 text-pink-600 border-pink-200"
+                        : "bg-gray-50 text-gray-600 border-gray-200"
+                    }`}>
+                    {isFavorite(product.id) ? <FaHeart /> : <FaRegHeart />}
+                  </button>
+                </div>
+
+                {/* Live Viewer Count */}
+                <div className="flex items-center justify-center gap-2 text-sm text-blue-600 bg-blue-50 py-2 px-4 rounded-lg">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+                  <span>
+                    {viewerCount} people are viewing this product right now!
+                  </span>
+                </div>
               </div>
             </div>
           </div>

@@ -1,38 +1,74 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 
 export async function GET() {
   try {
-    // Read the response.json file
-    const jsonPath = path.join(process.cwd(), "public", "response.json");
-    const fileContents = fs.readFileSync(jsonPath, "utf8");
-    const data = JSON.parse(fileContents);
-
-    // Extract and transform the data
-    const mobilePhones = data.data.map((phone) => ({
-      id: phone.id,
-      name: phone.name,
-      description: phone.highlights || phone.name,
-      price: phone.price,
-      oldPrice: phone.discounted_price !== phone.price ? phone.price : null,
-      image: phone.image || "/assets/nothing.png",
-      tag: phone.discountcampaign ? `${phone.discountcampaign}% Off` : "New",
-      storage: phone.attributes?.Storage || "128GB",
-      specs: {
-        display: phone.highlights?.split("|")[0]?.trim() || "6.7-inch Display",
-        camera: phone.highlights?.split("|")[1]?.trim() || "Dual Camera",
-        processor: phone.highlights?.split("|")[3]?.trim() || "Processor",
-        battery: phone.highlights?.split("|")[2]?.trim() || "Battery",
-        os: "Android/iOS",
+    // Hardcoded mobile phone data
+    const mobilePhones = [
+      {
+        id: 1,
+        name: "iPhone 16 Pro Max",
+        description: "Latest iPhone with 6.7-inch display, A17 Pro chip",
+        price: "207,000",
+        oldPrice: null,
+        image: "/assets/Iphone-16-pro-max-price-in-nepal.jpg",
+        tag: "New",
+        storage: "256GB",
+        specs: {
+          display: "6.7-inch OLED",
+          camera: "48MP + 12MP Ultra Wide",
+          processor: "A17 Pro Chip",
+          battery: "All-day battery life",
+          os: "iOS 17",
+        },
       },
-    }));
+      {
+        id: 2,
+        name: "Samsung Galaxy S24 Ultra",
+        description: "5G Flagship with S Pen support",
+        price: "184,999",
+        oldPrice: "199,999",
+        image: "/assets/Samsung-s24-ultra.png",
+        tag: "10% Off",
+        storage: "256GB",
+        specs: {
+          display: "6.8-inch Dynamic AMOLED",
+          camera: "200MP + 12MP Ultra Wide",
+          processor: "Snapdragon 8 Gen 3",
+          battery: "5000mAh",
+          os: "Android 14",
+        },
+      },
+      {
+        id: 3,
+        name: "Nothing Phone 2",
+        description: "Unique Glyph Interface",
+        price: "89,999",
+        oldPrice: null,
+        image: "/assets/nothing.png",
+        tag: "New",
+        storage: "128GB",
+        specs: {
+          display: "6.7-inch OLED",
+          camera: "50MP + 50MP Ultra Wide",
+          processor: "Snapdragon 8+ Gen 1",
+          battery: "4700mAh",
+          os: "Android 14",
+        },
+      },
+    ];
+
+    if (mobilePhones.length === 0) {
+      return NextResponse.json(
+        { error: "No mobile phones available" },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json(mobilePhones);
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error in mobile phones API:", error);
     return NextResponse.json(
-      { error: "Failed to fetch mobile phones" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

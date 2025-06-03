@@ -5,7 +5,7 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "fatafatsewa.com",
-        pathname: "/storage/**",
+        pathname: "/**",
       },
       {
         protocol: "https",
@@ -14,13 +14,7 @@ const nextConfig = {
       },
     ],
   },
-  experimental: {
-    turbo: {
-      rules: {
-        "*.css": ["postcss-loader"],
-      },
-    },
-  },
+  turbopack: true,
 };
 
 export default nextConfig;
