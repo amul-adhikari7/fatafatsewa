@@ -9,8 +9,8 @@ const Banner = () => {
 
   const banners = [
     { id: 1, image: "/assets/home-banner.jpg", alt: "Banner 1" },
-    { id: 2, image: "/assets/home-banner-2.webp", alt: "Banner 2" },
-    { id: 3, image: "/assets/home-banner-3.webp", alt: "Banner 3" },
+    { id: 2, image: "/assets/home-banner-2.jpg", alt: "Banner 2" },
+    { id: 3, image: "/assets/home-banner-3.jpg", alt: "Banner 3" },
   ];
 
   useEffect(() => {
@@ -103,7 +103,7 @@ const Banner = () => {
             {/* Top Large Banner */}
             <div className="relative rounded-2xl overflow-hidden shadow-lg h-[220px]">
               <Image
-                src="/assets/iPhone-16-Series-in-EMI-Plans.jpg"
+                src="/assets/side-banner.jpg"
                 alt="iPhone 16 Series"
                 fill
                 className="object-cover transform hover:scale-105 transition-transform duration-300"
@@ -114,13 +114,13 @@ const Banner = () => {
 
             {/* Bottom Two Equal Banners */}
             <div className="grid grid-cols-2 gap-3 h-[220px]">
-              {[2, 3].map((num) => (
+              {[1, 2].map((num) => (
                 <div
                   key={num}
                   className="relative rounded-2xl overflow-hidden shadow-lg">
                   <Image
-                    src={`/assets/side banner ${num}.png`}
-                    alt={`Side Banner ${num}`}
+                    src={`/assets/bottom-banner-${num}.jpg`}
+                    alt={`Bottom Banner ${num}`}
                     fill
                     className="object-cover transform hover:scale-105 transition-transform duration-300"
                     sizes="(max-width: 1024px) 100vw, 25vw"

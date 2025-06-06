@@ -65,8 +65,7 @@ export default function MobilePhones() {
     page * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE + ITEMS_PER_PAGE
   );
-
-  const getProductUrl = (id) => `/components/features/products/${id}`;
+  const getProductUrl = (id) => `/product/${id}`;
 
   const handleClick = (id) => router.push(getProductUrl(id));
   // Get available colors based on product type
@@ -166,7 +165,7 @@ export default function MobilePhones() {
             More Products
           </button>
         </div>
-        <div className="h-1 bg-orange-500 w-24 sm:w-32 mb-4"></div>
+        <div className="h-1 bg-orange-500 w-[100%] sm:w-32 mb-4"></div>
 
         {/* Product Cards - Horizontal scroll on mobile */}
         <div className="relative">

@@ -1,41 +1,30 @@
-import { Poppins, DM_Sans } from 'next/font/google'
-import './globals.css'
-import { ProductsProvider } from './components/contexts/ProductsContext'
-import { CartProvider } from './components/contexts/CartContext'
-import { FavoritesProvider } from './components/contexts/FavoritesContext'
-import { CategoriesProvider } from './components/contexts/Categories'
+import { Poppins, DM_Sans } from "next/font/google";
+import "./globals.css";
+import Providers from "./components/Providers";
 
 const poppins = Poppins({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  variable: '--font-poppins'
-})
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-poppins",
+});
 
 const dmSans = DM_Sans({
-  weight: ['400', '500', '700'],
-  subsets: ['latin'],
-  variable: '--font-dm-sans'
-})
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+});
 
 export const metadata = {
-  title: 'Fatafat Sewa',
-  description: 'Nepals Leading Online Shopping Platform'
-}
+  title: "Fatafat Sewa",
+  description: "Nepals Leading Online Shopping Platform",
+};
 
-export default function RootLayout ({ children }) {
+export default function RootLayout({ children }) {
   return (
-    <html lang='en' className={`${poppins.variable} ${dmSans.variable}`}>
+    <html lang="en" className={`${poppins.variable} ${dmSans.variable}`}>
       <body className={poppins.className}>
-        <CategoriesProvider>
-          <ProductsProvider>
-            <CartProvider>
-              <FavoritesProvider>
-                {children}
-              </FavoritesProvider>
-            </CartProvider>
-          </ProductsProvider>
-        </CategoriesProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
-  )
+  );
 }

@@ -94,7 +94,7 @@ const HomeAppliances2024 = () => {
             More Products
           </button>
         </div>
-        <div className="h-1 bg-orange-500 w-24 sm:w-32 mb-4"></div>
+        <div className="h-1 bg-orange-500 w-full sm:w-32 mb-4"></div>
 
         {/* Product Cards - Horizontal scroll on mobile */}
         <div className="relative">

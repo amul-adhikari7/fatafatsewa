@@ -34,10 +34,12 @@ export const CartProvider = ({ children }) => {
       )
     );
   };
-
   const cartTotal = cart.reduce((total, item) => {
-    // Remove 'Rs ' prefix and commas, then convert to number
-    const price = parseFloat(item.price.replace("Rs ", "").replace(/,/g, ""));
+    // Handle both string and number price formats
+    const price =
+      typeof item.price === "string"
+        ? parseFloat(item.price.replace("Rs ", "").replace(/,/g, ""))
+        : item.price;
     return total + price * item.quantity;
   }, 0);
 

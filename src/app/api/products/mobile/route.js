@@ -15,7 +15,8 @@ export async function GET() {
         storage: "256GB",
         specs: {
           display: "6.7-inch OLED",
-          camera: "48MP + 12MP Ultra Wide",
+          camera:
+            "48MP + 12MP Ultra Wide + 12MP Telephoto Lens with 5x Optical Zoom and 2x Telephoto",
           processor: "A17 Pro Chip",
           battery: "All-day battery life",
           os: "iOS 17",
@@ -24,7 +25,8 @@ export async function GET() {
       {
         id: 2,
         name: "Samsung Galaxy S24 Ultra",
-        description: "5G Flagship with S Pen support",
+        description:
+          "Premium Android Phone with 6.8-inch display, Snapdragon 8 Gen 3 chip and 200MP camera",
         price: "184,999",
         oldPrice: "199,999",
         image: "/assets/Samsung-s24-ultra.png",
@@ -41,7 +43,8 @@ export async function GET() {
       {
         id: 3,
         name: "Nothing Phone 2",
-        description: "Unique Glyph Interface",
+        description:
+          "Unique Glyph Interface with 6.7-inch display and Snapdragon 8+ Gen 1 chip",
         price: "89,999",
         oldPrice: null,
         image: "/assets/nothing.png",

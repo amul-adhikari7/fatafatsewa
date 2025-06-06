@@ -37,10 +37,10 @@ export function FavoritesProvider({ children }) {
         delete newFavorites[product.id];
       } else {
         newFavorites[product.id] = {
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          image: product.image || product.image_urls?.default,
+          ...product,
+          image:
+            product.image || product.images?.[0] || product.image_urls?.default,
+          images: product.images || [product.image],
         };
       }
       return newFavorites;

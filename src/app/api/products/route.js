@@ -5,9 +5,13 @@ const API_URL = "https://fatafatsewa.com/api/v1/products";
 
 export async function GET(request, { params }) {
   try {
-    const response = await fetch(API_URL, {
+    const { searchParams } = new URL(request.url);
+    const page = searchParams.get("page") || 1;
+    const limit = searchParams.get("limit") || 20;
+
+    const response = await fetch(`${API_URL}?page=${page}&limit=${limit}`, {
       headers: {
-        Authorization: `${API_KEY}`,
+        "API-Key": API_KEY,
         "Content-Type": "application/json",
       },
     });
@@ -16,14 +20,13 @@ export async function GET(request, { params }) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const rawData = await response.json();
-
-    // Transform the data to match our frontend's expected format
+    const rawData = await response.json(); // Transform the data to match our frontend's expected format
     const products = rawData.data.map((product) => ({
       id: product.id,
       name: product.name,
       description: product.highlights || product.name,
       price: product.price,
+      category: product.category || "",
       oldPrice:
         product.discounted_price !== product.price ? product.price : null,
       image: product.image || "/assets/nothing.png",
@@ -40,8 +43,12 @@ export async function GET(request, { params }) {
         os: "Android/iOS",
       },
     }));
-
-    return NextResponse.json(products);
+    return NextResponse.json({
+      data: products,
+      currentPage: parseInt(page),
+      totalPages: 218,
+      totalItems: 218 * 20, // Approximate total items based on total pages
+    });
   } catch (error) {
     console.error("Error fetching products:", error);
     return NextResponse.json(

@@ -14,7 +14,15 @@ const nextConfig = {
       },
     ],
   },
-  turbopack: true,
+  // Enable more modern features
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  eslint: {
+    ignoreDuringBuilds: false,
+  },
+  poweredByHeader: false,
+  reactStrictMode: true,
 };
 
 export default nextConfig;

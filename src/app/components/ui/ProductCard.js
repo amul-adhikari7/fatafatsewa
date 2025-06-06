@@ -10,7 +10,7 @@ const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
   const { toggleFavorite, isFavorite } = useFavorites();
 
-  const getProductUrl = (id) => `/components/features/products/${id}`;
+  const getProductUrl = (id) => `/product/${id}`;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 group flex-shrink-0 w-[280px] sm:w-auto">
