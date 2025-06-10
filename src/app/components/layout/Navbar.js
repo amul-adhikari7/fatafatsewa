@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaTimes, FaBars } from "react-icons/fa";
+import { FaTimes, FaBars, FaSearch } from "react-icons/fa";
 
 // Components
 import {
@@ -42,7 +42,7 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="bg-white shadow-sm sticky top-0 z-50">
+      <header className="bg-white shadow-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="flex flex-col lg:flex-row items-center py-2 lg:py-4 gap-3 lg:gap-8">
             <div className="w-full lg:w-auto flex items-center justify-between">
@@ -55,8 +55,13 @@ const Navbar = () => {
               {/* Logo */}
               <Logo />
 
-              {/* Spacer for mobile layout balance */}
-              <div className="lg:hidden w-10" />
+              {/* Mobile Search Toggle */}
+              <button
+                className="lg:hidden p-2.5 hover:bg-gray-50 rounded-lg text-gray-500 hover:text-blue-600 transition-all"
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                aria-label="Toggle search">
+                <FaSearch className="w-6 h-6" />
+              </button>
             </div>
 
             {/* Search Bar - Desktop */}
@@ -74,15 +79,6 @@ const Navbar = () => {
               onCartClick={() => setIsCartOpen(true)}
               onLogout={logout}
             />
-
-            {/* Mobile Navigation */}
-            <MobileNav
-              isSearchOpen={isSearchOpen}
-              setIsSearchOpen={setIsSearchOpen}
-              cartItemsCount={cartItemsCount}
-              favoritesCount={favorites.length}
-              onCartClick={() => setIsCartOpen(true)}
-            />
           </div>
         </div>
 
@@ -96,6 +92,15 @@ const Navbar = () => {
           onClose={() => setMenuOpen(false)}
         />
       </header>
+
+      {/* Mobile Navigation */}
+      <MobileNav
+        isSearchOpen={isSearchOpen}
+        setIsSearchOpen={setIsSearchOpen}
+        cartItemsCount={cartItemsCount}
+        favoritesCount={favorites.length}
+        onCartClick={() => setIsCartOpen(true)}
+      />
 
       {/* Modals */}
       <AuthModal

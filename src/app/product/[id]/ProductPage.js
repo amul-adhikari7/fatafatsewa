@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { FaHeart, FaEye } from "react-icons/fa";
+import { IoGitCompareOutline } from "react-icons/io5";
 import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { getProductById } from "@/app/store/productsSlice";
@@ -169,13 +170,22 @@ const ProductPage = () => {
   }
 
   return (
-    <div className="bg-white">
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6">
+    <div className="bg-white pb-36 sm:pb-0">
+      {" "}
+      {/* Increased bottom padding for mobile */}
+      {/* Mobile Sticky Header */}
+      <div className="fixed top-[60px] left-0 right-0 bg-white/95 backdrop-blur-sm z-40 py-3 px-4 border-b md:hidden">
+        <h1 className="text-sm font-medium text-gray-900 line-clamp-1">
+          {product?.name}
+        </h1>
+      </div>
+      {/* Main Content - Adjusted top padding */}
+      <div className="max-w-7xl mx-auto pt-[120px] md:pt-6 px-4 sm:px-6">
         {/* Main product grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           {/* Left: Image carousel */}
-          <div className="flex flex-col items-center">
-            <div className="relative w-full flex justify-center">
+          <div className="flex flex-col -mx-4 sm:mx-0">
+            <div className="relative w-full flex justify-center bg-white">
               <div className="relative w-full h-[400px] sm:h-[500px] bg-white rounded-2xl flex items-center justify-center overflow-hidden group cursor-zoom-in shadow-sm hover:shadow-md transition-shadow">
                 <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white/5" />
                 <Image
@@ -189,8 +199,9 @@ const ProductPage = () => {
                 />
               </div>
             </div>
-            {/* Thumbnail Gallery */}
-            <div className="mt-4 flex gap-2 overflow-x-auto px-2 py-1 max-w-full">
+
+            {/* Mobile optimized thumbnail gallery */}
+            <div className="mt-4 flex gap-2 overflow-x-auto px-4 hide-scrollbar">
               {[0, 1, 2, 3].map((index) => (
                 <button
                   key={index}
@@ -211,85 +222,49 @@ const ProductPage = () => {
                 </button>
               ))}
             </div>
-            {/* Product Description in left column */}
-            {product.description && (
-              <div className="mt-12 w-full bg-gray-50/50 rounded-xl border border-gray-100">
-                <div className="px-4 py-3 border-b border-gray-100">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-5 h-5 text-gray-600">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
-                      />
-                    </svg>
-                    Product Description
-                  </h3>
-                </div>
-                <div className="relative">
-                  <div
-                    className={`p-6 prose prose-sm max-w-none text-gray-600 leading-relaxed ${
-                      !isDescriptionExpanded ? "max-h-32 overflow-hidden" : ""
-                    }`}
-                    dangerouslySetInnerHTML={{ __html: product.description }}
-                  />
-                  {!isDescriptionExpanded && (
-                    <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-gray-50/90 to-transparent" />
-                  )}
-                  <button
-                    onClick={() =>
-                      setIsDescriptionExpanded(!isDescriptionExpanded)
-                    }
-                    className="w-full mt-2 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center justify-center gap-1 transition-colors">
-                    {isDescriptionExpanded ? (
-                      <>
-                        Show Less
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="w-4 h-4">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="m4.5 15.75 7.5-7.5 7.5 7.5"
-                          />
-                        </svg>
-                      </>
-                    ) : (
-                      <>
-                        Read More
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="w-4 h-4">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="m19.5 8.25-7.5 7.5-7.5-7.5"
-                          />
-                        </svg>
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Right: Product info */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4 px-4 sm:px-0">
+            {/* Mobile Price Section */}
+            <div className="md:hidden space-y-2 bg-white/95 backdrop-blur-sm -mx-4 px-4 py-3 border-b">
+              <div className="flex items-baseline gap-2 flex-wrap">
+                <span className="text-2xl font-bold text-blue-600">
+                  Rs. {product?.price?.toLocaleString()}
+                </span>
+                {hasDiscount && (
+                  <>
+                    <span className="text-base text-gray-400 line-through">
+                      Rs. {product?.oldPrice?.toLocaleString()}
+                    </span>
+                    <span className="text-sm bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+                      {discountPercent}% OFF
+                    </span>
+                  </>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex text-yellow-400 text-sm">
+                  {[...Array(5)].map((_, i) => (
+                    <span
+                      key={i}
+                      className={
+                        i < Math.floor(rating)
+                          ? "text-yellow-400"
+                          : "text-gray-200"
+                      }>
+                      ★
+                    </span>
+                  ))}
+                </div>
+                <span className="text-sm text-blue-600 font-medium">
+                  {rating}
+                </span>
+                <span className="text-sm text-gray-500">
+                  ({reviewCount} reviews)
+                </span>
+              </div>
+            </div>
             {/* Product Information Section */}
             <div className="mb-2">
               <table className="min-w-full text-sm text-gray-700">
@@ -981,6 +956,78 @@ const ProductPage = () => {
           </div>
         </div>
       </div>
+      {/* Mobile Sticky Bottom Bar - Above navbar */}
+      <div className="fixed bottom-[60px] left-0 right-0 md:hidden z-40">
+        {/* Price Summary Bar */}
+        <div className="bg-white/95 backdrop-blur-sm border-t px-4 py-2 flex items-center justify-between">
+          <div className="flex flex-col">
+            <span className="text-base font-bold text-gray-900">
+              Rs. {product?.price?.toLocaleString()}
+            </span>
+            {hasDiscount && (
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-gray-500 line-through">
+                  Rs. {product?.oldPrice?.toLocaleString()}
+                </span>
+                <span className="text-xs font-medium text-green-600">
+                  {discountPercent}% off
+                </span>
+              </div>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => toggleFavorite(product)}
+              className={`px-3 py-1 rounded text-xs font-medium ${
+                isFavorite(product?.id)
+                  ? "bg-red-50 text-red-500"
+                  : "bg-gray-50 text-gray-500"
+              }`}>
+              Wishlist
+            </button>
+            <button
+              onClick={() => window.location.href = `/compare?product=${product.id}`}
+              className="px-3 py-1 rounded text-xs font-medium bg-gray-50 text-gray-500">
+              Compare
+            </button>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="bg-white px-4 py-2 flex items-center gap-3 border-t">
+          <button
+            onClick={handleAddToCart}
+            className="flex-1 bg-blue-600 text-white px-4 py-3 rounded-lg font-medium active:scale-[0.98] transition-transform text-sm">
+            Add to Cart
+          </button>
+          <button
+            onClick={() => {
+              window.location.href = `/emi-application?productId=${product.id}&price=${
+                product.price
+              }&name=${encodeURIComponent(product.name)}`;
+            }}
+            className="flex-1 bg-orange-500 text-white px-4 py-3 rounded-lg font-medium active:scale-[0.98] transition-transform text-sm">
+            Apply EMI
+          </button>
+        </div>
+      </div>
+      {/* Safe Area Spacing for iOS */}
+      <div className="h-[env(safe-area-inset-bottom)] md:hidden" />
+      <style jsx global>{`
+        @media (max-width: 640px) {
+          .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+          .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+          /* Add safe area padding for mobile devices */
+          .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+          }
+        }
+      `}</style>
     </div>
   );
 };

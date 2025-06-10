@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { FaHeart, FaShoppingCart, FaTruck } from "react-icons/fa";
+import { FaHeart, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { IoGitCompareOutline } from "react-icons/io5";
 import { MdOutlinePreview } from "react-icons/md";
 import { useCart } from "@/app/components/contexts/CartContext";
@@ -38,31 +38,26 @@ const Laptops = () => {
   const [laptops, setLaptops] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
-  const totalPages = 12; // We'll show 12 pages of laptops
+  const [containerRef, setContainerRef] = useState(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
 
+  // Fetch laptops data
   useEffect(() => {
     const loadLaptops = async () => {
-      if (!currentPage || !itemsPerPage) return;
-
       try {
         setLoading(true);
         setError(null);
 
-        const response = await fetchProducts(currentPage, itemsPerPage);
-        console.log("API Response:", response); // Debug log
-
+        const response = await fetchProducts();
         if (!response || !response.data) {
           throw new Error("Invalid response from server");
         }
 
-        // Ensure we have a valid response with data array
         const validProducts = Array.isArray(response.data) ? response.data : [];
         const laptopProducts = validProducts.filter(isValidLaptop);
 
         if (laptopProducts.length > 0) {
-          // Transform the data to ensure price is properly formatted
           const formattedLaptops = laptopProducts.map((laptop) => ({
             ...laptop,
             price:
@@ -92,227 +87,144 @@ const Laptops = () => {
     };
 
     loadLaptops();
-  }, [currentPage, itemsPerPage]);
+  }, []);
 
-  const handleFavoriteClick = (e, laptop) => {
-    e.preventDefault();
-    e.stopPropagation();
-    toggleFavorite(laptop);
+  const handleScroll = () => {
+    if (containerRef) {
+      const { scrollLeft, scrollWidth, clientWidth } = containerRef;
+      setShowLeftArrow(scrollLeft > 0);
+      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10);
+    }
   };
 
-  const handleAddToCart = (e, laptop) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addToCart(laptop);
+  const scrollTo = (direction) => {
+    if (containerRef) {
+      const scrollAmount = direction === "left" ? -400 : 400;
+      containerRef.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    }
   };
+
+  useEffect(() => {
+    if (containerRef) {
+      handleScroll();
+      containerRef.addEventListener("scroll", handleScroll);
+      return () => containerRef.removeEventListener("scroll", handleScroll);
+    }
+  }, [containerRef, handleScroll]);
+
+  const handleClick = (id) => router.push(`/product/${id}`);
 
   return (
-    <div className="py-10 px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div className="space-y-1 w-[90%]">
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-              Featured Laptops
+    <div className="bg-white py-8 sm:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              Latest Laptops
             </h2>
-            <p className="text-gray-500 text-sm">
-              Discover our latest collection of premium laptops
-            </p>
-            <div className="h-1 bg-gradient-to-r from-orange-600 to-orange-400 w-full mt-2 rounded-full"></div>
+            <div className="h-1 bg-gradient-to-r from-blue-500 to-blue-700 w-24 mt-2"></div>
           </div>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => router.push("/category/laptops")}
-              className="relative inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg hover:from-blue-700 hover:to-blue-600 transition-all duration-300 text-sm font-medium shadow-sm hover:shadow-md">
-              View All
-            </button>
-          </div>
+          <button
+            onClick={() => router.push("/category/laptops")}
+            className="hidden sm:flex items-center gap-2 px-5 py-2 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-all duration-300 font-medium text-sm">
+            View All
+            <FaChevronRight className="w-4 h-4" />
+          </button>
         </div>
 
-        {loading ? (
-          <div className="flex justify-center items-center min-h-[60vh]">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-          </div>
-        ) : error ? (
-          <div className="flex justify-center items-center min-h-[40vh]">
-            <p className="text-red-500">{error}</p>
-          </div>
-        ) : laptops.length === 0 ? (
-          <div className="flex justify-center items-center min-h-[40vh]">
-            <p className="text-gray-500">No laptops available</p>
-          </div>
-        ) : (
-          <div className="relative">
-            <div className="overflow-x-auto overscroll-x-contain hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
-                {laptops.map((laptop) => (
-                  <div
-                    key={laptop.id}
-                    className="bg-white rounded-2xl overflow-hidden relative shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out group flex flex-col h-[380px] sm:h-[420px] transform hover:-translate-y-1 flex-shrink-0 w-[280px] sm:w-auto">
+        <div className="relative group">
+          {/* Desktop Navigation Arrows */}
+          <button
+            onClick={() => scrollTo("left")}
+            className={`hidden sm:flex absolute -left-6 top-1/2 -translate-y-1/2 z-10 h-12 w-12 items-center justify-center rounded-full bg-white shadow-lg text-gray-600 hover:text-blue-600 transition-all duration-300 transform hover:scale-110 ${
+              !showLeftArrow && "opacity-0 pointer-events-none"
+            } group-hover:opacity-100`}>
+            <FaChevronLeft className="w-5 h-5" />
+          </button>
+
+          <button
+            onClick={() => scrollTo("right")}
+            className={`hidden sm:flex absolute -right-6 top-1/2 -translate-y-1/2 z-10 h-12 w-12 items-center justify-center rounded-full bg-white shadow-lg text-gray-600 hover:text-blue-600 transition-all duration-300 transform hover:scale-110 ${
+              !showRightArrow && "opacity-0 pointer-events-none"
+            } group-hover:opacity-100`}>
+            <FaChevronRight className="w-5 h-5" />
+          </button>
+
+          {/* Products Container */}
+          <div
+            ref={setContainerRef}
+            className="overflow-x-auto overscroll-x-contain hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
+            <div className="flex sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              {laptops.map((laptop) => (
+                <div
+                  key={laptop.id}
+                  onClick={() => handleClick(laptop.id)}
+                  className="bg-white rounded-2xl p-4 relative shadow-sm hover:shadow-xl transition-all duration-500 cursor-pointer group flex flex-col min-h-[320px] sm:min-h-[380px] transform hover:-translate-y-1 flex-shrink-0 w-[calc(50%-12px)] sm:w-auto border border-gray-100 hover:border-blue-100">
+                  {laptop.tag && (
+                    <span
+                      className={`absolute top-4 left-4 text-white text-xs font-medium px-3 py-1 rounded-full z-10 shadow-lg backdrop-blur-sm ${
+                        laptop.tag.includes("%")
+                          ? "bg-green-500/90"
+                          : laptop.tag === "New"
+                          ? "bg-blue-500/90"
+                          : "bg-orange-500/90"
+                      }`}>
+                      {laptop.tag}
+                    </span>
+                  )}
+
+                  {/* Product Image */}
+                  <div className="relative aspect-square mb-4">
+                    <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-xl" />
+                    <Image
+                      src={laptop.image || "/assets/placeholder.png"}
+                      alt={laptop.name}
+                      fill
+                      className="object-contain p-4 transform group-hover:scale-110 transition-transform duration-500"
+                    />
+
                     {/* Quick Action Buttons */}
-                    <div className="absolute top-3 right-3 z-20 flex gap-2">
+                    <div className="absolute right-2 top-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <button
-                        onClick={(e) => handleFavoriteClick(e, laptop)}
-                        className="p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white transition-all duration-200">
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(laptop);
+                        }}
+                        className="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all duration-300 hover:scale-110 text-gray-600 hover:text-red-500">
                         <FaHeart
-                          className={`w-5 h-5 ${
-                            isFavorite(laptop.id)
-                              ? "text-red-500"
-                              : "text-gray-400"
-                          }`}
+                          className={
+                            isFavorite(laptop.id) ? "text-red-500" : ""
+                          }
                         />
                       </button>
                     </div>
+                  </div>
 
-                    {/* Image Section */}
-                    <div
-                      onClick={() => router.push(`/product/${laptop.id}`)}
-                      className="relative h-48 sm:h-52 bg-gradient-to-br from-gray-50 to-gray-100 cursor-pointer group/image">
-                      {laptop.tag && (
-                        <div className="absolute top-3 left-3 z-10">
-                          <div className="bg-orange-500 text-white px-3 py-1 text-xs font-medium rounded">
-                            {laptop.tag}
-                          </div>
-                        </div>
-                      )}
+                  {/* Product Info */}
+                  <div className="flex-1 flex flex-col">
+                    <h3 className="font-medium text-gray-800 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2 mb-2">
+                      {laptop.name}
+                    </h3>
 
-                      <Image
-                        src={laptop.image || "/assets/MacBook-pro-retina.jpg"}
-                        alt={laptop.name}
-                        fill
-                        className="object-contain p-6 transition-transform duration-500 group-hover/image:scale-110"
-                      />
-
-                      {/* Hover Icons */}
-                      <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover/image:opacity-100 transition-opacity duration-300">
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            router.push(`/product/${laptop.id}`);
-                          }}
-                          className="p-3 rounded-full bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white transition-all duration-200 hover:scale-110"
-                          title="Quick View">
-                          <MdOutlinePreview className="w-5 h-5 text-gray-700" />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                          }}
-                          className="p-3 rounded-full bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white transition-all duration-200 hover:scale-110"
-                          title="Compare">
-                          <IoGitCompareOutline className="w-5 h-5 text-gray-700" />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Content Section */}
-                    <div className="flex-1 p-4">
-                      <h3 className="font-medium text-gray-900 mb-3 line-clamp-2 min-h-[40px]">
-                        {laptop.name}
-                      </h3>
-                      <div className="space-y-3">
-                        <div className="flex items-baseline gap-2">
-                          <p className="text-xl font-bold text-blue-600">
-                            Rs. {laptop.price.toLocaleString()}
-                          </p>
-                          {laptop.oldPrice && (
-                            <p className="text-sm text-gray-400 line-through">
-                              Rs. {laptop.oldPrice.toLocaleString()}
-                            </p>
-                          )}
-                        </div>
-                        {/* Specs Preview */}
-                        <div className="text-xs text-gray-600 space-y-1">
-                          {laptop.processor && (
-                            <div className="flex items-center gap-1">
-                              <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                              {laptop.processor}
-                            </div>
-                          )}
-                          {laptop.ram && (
-                            <div className="flex items-center gap-1">
-                              <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                              {laptop.ram} RAM
-                            </div>
-                          )}
-                          {laptop.storage && (
-                            <div className="flex items-center gap-1">
-                              <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                              {laptop.storage}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="p-4 pt-0 mt-auto">
-                      <button
-                        onClick={(e) => handleAddToCart(e, laptop)}
-                        className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-3 px-4 rounded-xl hover:bg-orange-500 transition-all duration-300 font-medium">
-                        <FaShoppingCart className="w-4 h-4" />
-                        Add to Cart
-                      </button>
-                      <div className="flex justify-between mt-3 text-[10px] sm:text-xs text-gray-600">
-                        <span className="border border-gray-300 text-orange-600 font-bold px-2 py-1 rounded-full">
-                          EMI Available
+                    <div className="mt-auto">
+                      <div className="flex items-baseline gap-2 mb-3">
+                        <span className="text-lg font-bold text-blue-600">
+                          Rs. {laptop.price?.toLocaleString()}
                         </span>
-                        <span className="border border-gray-300 text-blue-600 font-bold px-2 py-1 rounded-full">
-                          <FaTruck className="inline-block mr-1 w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                          Fast Delivery
-                        </span>
+                        {laptop.oldPrice && (
+                          <span className="text-sm text-gray-400 line-through">
+                            Rs. {laptop.oldPrice?.toLocaleString()}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Pagination */}
-            <div className="flex justify-center mt-8 gap-2">
-              <button
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className={`px-4 py-2 rounded-lg ${
-                  currentPage === 1
-                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}>
-                Prev
-              </button>
-              <div className="flex items-center gap-2">
-                <span className="px-4 py-2">
-                  Page {currentPage} of {totalPages}
-                </span>
-              </div>
-              <button
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                }
-                disabled={currentPage === totalPages}
-                className={`px-4 py-2 rounded-lg ${
-                  currentPage === totalPages
-                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}>
-                Next
-              </button>
+                </div>
+              ))}
             </div>
           </div>
-        )}
+        </div>
       </div>
-
-      {/* Custom scrollbar styles */}
-      <style jsx global>{`
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </div>
   );
 };

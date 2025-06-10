@@ -1,10 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { FaHeart, FaTruck } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useFavorites } from "../../../components/contexts/FavoritesContext";
 import { useCart } from "../../../components/contexts/CartContext";
+import { MdOutlinePreview } from "react-icons/md";
+import { IoGitCompareOutline } from "react-icons/io5";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -74,8 +76,77 @@ const HomeAppliances2024 = () => {
   const { toggleFavorite, isFavorite } = useFavorites();
   const { addToCart } = useCart();
   const [page, setPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [containerRef, setContainerRef] = useState(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const itemsPerPage = 2; // Show 2 items in mobile view
+  const totalPages = Math.ceil(appliances.length / itemsPerPage);
 
-  const totalPages = Math.ceil(appliances.length / ITEMS_PER_PAGE);
+  // Track scroll position for active dot
+  const handleScroll = useCallback(() => {
+    if (containerRef) {
+      const scrollLeft = containerRef.scrollLeft;
+      const itemWidth = containerRef.clientWidth;
+      const newPage = Math.round(scrollLeft / itemWidth);
+      setCurrentPage(newPage);
+    }
+  }, [containerRef]);
+
+  useEffect(() => {
+    const container = containerRef;
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
+      return () => container.removeEventListener("scroll", handleScroll);
+    }
+  }, [containerRef, handleScroll]);
+
+  // Scroll to page
+  const goToPage = useCallback(
+    (pageNumber) => {
+      if (containerRef) {
+        const itemWidth = containerRef.clientWidth;
+        containerRef.scrollTo({
+          left: pageNumber * itemWidth,
+          behavior: "smooth",
+        });
+        setCurrentPage(pageNumber);
+      }
+    },
+    [containerRef]
+  );
+
+  const checkScroll = useCallback(() => {
+    if (containerRef) {
+      const { scrollLeft, scrollWidth, clientWidth } = containerRef;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  }, [containerRef]);
+
+  useEffect(() => {
+    const container = containerRef;
+    if (container) {
+      container.addEventListener("scroll", checkScroll);
+      checkScroll();
+      return () => container.removeEventListener("scroll", checkScroll);
+    }
+  }, [containerRef, checkScroll]);
+
+  const scroll = useCallback(
+    (direction) => {
+      if (containerRef) {
+        const scrollAmount = containerRef.clientWidth * 0.8;
+        containerRef.scrollBy({
+          left: direction === "left" ? -scrollAmount : scrollAmount,
+          behavior: "smooth",
+        });
+      }
+    },
+    [containerRef]
+  );
+
+  const totalPage = Math.ceil(appliances.length / ITEMS_PER_PAGE);
   const visibleAppliances = appliances.slice(
     page * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE + ITEMS_PER_PAGE
@@ -86,68 +157,96 @@ const HomeAppliances2024 = () => {
   return (
     <div className="bg-white py-8 sm:py-10 px-3 sm:px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 relative">
             Home Appliances Of 2025
+            <div className="h-1 bg-gradient-to-r from-orange-500 to-blue-500 w-full sm:w-32 mt-2"></div>
           </h2>
-          <button className="bg-blue-100 text-blue-600 text-xs sm:text-sm px-3 sm:px-4 py-1 rounded-full hover:bg-blue-200">
+          <button className="bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs sm:text-sm px-4 py-2 rounded-full hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0">
             More Products
           </button>
         </div>
-        <div className="h-1 bg-orange-500 w-full sm:w-32 mb-4"></div>
 
-        {/* Product Cards - Horizontal scroll on mobile */}
         <div className="relative">
-          <div className="overflow-x-auto hide-scrollbar -mx-3 px-3 sm:mx-0 sm:px-0">
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
-              {visibleAppliances.map((item) => (
+          <button
+            onClick={() => scroll("left")}
+            className={`hidden sm:flex absolute -left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg backdrop-blur-sm transition-all ${
+              !canScrollLeft
+                ? "opacity-0 cursor-default"
+                : "opacity-100 cursor-pointer"
+            }`}
+            disabled={!canScrollLeft}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-5 h-5">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 19.5L8.25 12l7.5-7.5"
+              />
+            </svg>
+          </button>
+          <button
+            onClick={() => scroll("right")}
+            className={`hidden sm:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg backdrop-blur-sm transition-all ${
+              !canScrollRight
+                ? "opacity-0 cursor-default"
+                : "opacity-100 cursor-pointer"
+            }`}
+            disabled={!canScrollRight}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-5 h-5">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+              />
+            </svg>
+          </button>
+
+          <div
+            ref={setContainerRef}
+            className="overflow-x-auto overscroll-x-contain hide-scrollbar -mx-3 px-3 sm:mx-0 sm:px-0 scroll-smooth snap-x snap-mandatory max-w-full">
+            <div className="flex gap-3 sm:gap-4">
+              {appliances.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-white border border-gray-100 rounded-xl p-3 relative shadow-sm hover:shadow-xl hover:shadow-blue-200/100 transition-all duration-300 ease-in-out cursor-pointer group flex flex-col h-[370px] sm:h-[400px] transform hover:-translate-y-1 flex-shrink-0 w-[280px] sm:w-auto"
+                  className="bg-white rounded-2xl shadow-sm hover:shadow-xl hover:shadow-blue-100 transition-all duration-300 ease-in-out cursor-pointer group flex flex-col min-h-[320px] sm:min-h-[400px] transform hover:-translate-y-1 flex-shrink-0 w-[calc(50%-8px)] sm:w-[280px] touch-pan-x snap-start border border-gray-100/50"
                   onClick={() => handleClick(item.id)}>
                   {item.tag && (
                     <span
-                      className={`absolute top-2 left-2 text-white text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded ${
+                      className={`absolute top-3 left-3 text-white text-xs font-medium px-3 py-1 rounded-full z-10 backdrop-blur-md ${
                         item.tag.includes("%")
-                          ? "bg-green-500"
+                          ? "bg-green-500/90"
                           : item.tag === "New"
-                          ? "bg-blue-500"
-                          : "bg-orange-500"
-                      }`}>
+                          ? "bg-blue-500/90"
+                          : "bg-orange-500/90"
+                      } shadow-lg`}>
                       {item.tag}
                     </span>
-                  )}{" "}
-                  <div className="flex-1 flex items-center justify-center relative">
-                    {/* Quick Action Overlay */}
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300 z-10" />
-                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
+                  )}
+
+                  <div className="flex-1 flex items-center justify-center relative p-4 sm:p-6">
+                    <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl" />
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 scale-90 group-hover:scale-100">
                       <button
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                           router.push(`/product/${item.id}`);
                         }}
-                        className="p-2 rounded-full bg-white shadow-lg hover:scale-110 transition-transform duration-200"
+                        className="p-2 rounded-full bg-white/95 shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 backdrop-blur-sm"
                         title="Quick View">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-gray-600"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                          />
-                        </svg>
+                        <MdOutlinePreview className="w-5 h-5 text-gray-700" />
                       </button>
                       <button
                         onClick={(e) => {
@@ -155,37 +254,25 @@ const HomeAppliances2024 = () => {
                           e.stopPropagation();
                           router.push(`/compare?product=${item.id}`);
                         }}
-                        className="p-2 rounded-full bg-white shadow-lg hover:scale-110 transition-transform duration-200"
+                        className="p-2 rounded-full bg-white/95 shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 backdrop-blur-sm"
                         title="Compare">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-gray-600"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-                          />
-                        </svg>
+                        <IoGitCompareOutline className="w-5 h-5 text-gray-700" />
                       </button>
                     </div>
                     <Image
                       src={item.image}
                       alt={item.name}
-                      width={200}
-                      height={200}
-                      className="mx-auto object-contain max-h-36 sm:max-h-48 transform group-hover:scale-105 transition-transform duration-300"
-                    />{" "}
+                      width={180}
+                      height={180}
+                      className="mx-auto object-contain w-full h-[160px] sm:h-[180px] transform group-hover:scale-105 transition-transform duration-300"
+                    />
                     <button
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         toggleFavorite(item);
                       }}
-                      className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white shadow-sm opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all z-30 touch-manipulation"
+                      className="absolute top-3 right-3 p-2 rounded-full bg-white/95 hover:bg-white shadow-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all z-30 touch-manipulation active:scale-95 backdrop-blur-sm"
                       aria-label="Add to favorites">
                       <FaHeart
                         className={`w-4 h-4 ${
@@ -196,30 +283,24 @@ const HomeAppliances2024 = () => {
                       />
                     </button>
                   </div>
-                  <div className="mt-auto space-y-1">
-                    <p className="text-xs sm:text-sm font-medium text-gray-800 line-clamp-2">
+
+                  <div className="px-4 pb-4 sm:px-5 sm:pb-5 space-y-2.5">
+                    <h3 className="text-sm sm:text-base font-medium text-gray-800 line-clamp-2 min-h-[40px] leading-snug">
                       {item.name}
-                    </p>
-                    <p className="text-[10px] sm:text-xs text-gray-500 line-clamp-1">
-                      {item.description}
-                    </p>
-                    <div>
+                    </h3>
+                    <div className="flex items-center gap-2">
                       {item.oldPrice && (
-                        <p className="text-[10px] sm:text-xs text-gray-400 line-through">
+                        <span className="text-xs text-gray-400 line-through">
                           {item.oldPrice}
-                        </p>
+                        </span>
                       )}
-                      <p className="text-blue-600 font-semibold text-sm sm:text-base">
+                      <span className="text-sm sm:text-base font-semibold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
                         {item.price}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-gray-600">
-                      <span className="border border-gray-300 text-orange-600 font-bold px-1.5 sm:px-2 py-0.5 rounded-full">
-                        EMI
                       </span>
-                      <span className="border border-gray-300 text-blue-600 font-bold px-1.5 sm:px-2 py-0.5 rounded-full">
-                        <FaTruck className="inline-block mr-1 w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                        Fatafat Delivery
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="text-[10px] sm:text-xs bg-gray-50 text-gray-600 px-2 py-0.5 rounded-md border border-gray-100">
+                        {item.description}
                       </span>
                     </div>
                   </div>
@@ -227,20 +308,22 @@ const HomeAppliances2024 = () => {
               ))}
             </div>
           </div>
-        </div>
 
-        {/* Pagination Dots */}
-        <div className="flex justify-center items-center gap-1.5 sm:gap-2 mt-4">
-          {[...Array(totalPages)].map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setPage(i)}
-              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full ${
-                page === i ? "bg-blue-600" : "bg-gray-300"
-              } transition-colors`}
-              aria-label={`Page ${i + 1}`}
-            />
-          ))}
+          {/* Pagination dots - Mobile only */}
+          <div className="flex justify-center gap-2 mt-4 sm:hidden">
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => goToPage(i)}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  currentPage === i
+                    ? "bg-orange-500 w-4"
+                    : "bg-gray-300 hover:bg-gray-400"
+                }`}
+                aria-label={`Go to page ${i + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
