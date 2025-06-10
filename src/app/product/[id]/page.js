@@ -1,8 +1,8 @@
 "use client";
-import { MainLayout } from '@/app/components/layout'
-import ProductPage from "./ProductPage"
-import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { MainLayout } from "@/app/components/layout";
+import ProductPage from "./ProductPage";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 
 export default function Page() {
   const { id } = useParams();
@@ -20,18 +20,18 @@ export default function Page() {
             </li>
             <li className="text-gray-400">/</li>
             <li>
-              <Link href="/product" className="text-gray-500 hover:text-blue-600">
+              <Link
+                href="/product"
+                className="text-gray-500 hover:text-blue-600">
                 Products
               </Link>
             </li>
             <li className="text-gray-400">/</li>
-            <li className="text-blue-600 font-medium">
-              {id}
-            </li>
+            <li className="text-blue-600 font-medium">{id}</li>
           </ol>
         </div>
       </nav>
-      
+
       <ProductPage />
     </MainLayout>
   );

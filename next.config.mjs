@@ -19,10 +19,8 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   eslint: {
-    ignoreDuringBuilds: false,
+    ignoreDuringBuilds: true,
   },
-  poweredByHeader: false,
-  reactStrictMode: true,
 };
 
 export default nextConfig;

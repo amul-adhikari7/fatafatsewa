@@ -1,11 +1,11 @@
 "use client";
 
-import { CartContext } from "@/app/components/contexts/CartContext";
+import { CartContext } from "../components/contexts/CartContext";
 import { useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 import Image from "next/image";
-import { useAuth } from "@/app/components/contexts/AuthContext";
-import { MainLayout } from "@/app/components/layout";
+import { useAuth } from "../components/contexts/AuthContext";
+import { MainLayout } from "../components/layout";
 import { FaShoppingCart, FaRegCreditCard, FaCheck } from "react-icons/fa";
 import { toast } from "react-toastify";
 

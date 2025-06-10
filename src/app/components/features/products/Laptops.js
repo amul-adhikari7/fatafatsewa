@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { FaHeart, FaTruck, FaShoppingCart } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { FaHeart, FaShoppingCart, FaTruck } from "react-icons/fa";
 import { IoGitCompareOutline } from "react-icons/io5";
 import { MdOutlinePreview } from "react-icons/md";
-import { useRouter } from "next/navigation";
-import { useFavorites } from "@/app/components/contexts/FavoritesContext";
 import { useCart } from "@/app/components/contexts/CartContext";
+import { useFavorites } from "@/app/components/contexts/FavoritesContext";
 import { fetchProducts } from "@/app/api/apiClient";
 
 // Helper function to validate laptop data

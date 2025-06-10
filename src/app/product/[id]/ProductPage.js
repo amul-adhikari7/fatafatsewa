@@ -1,13 +1,14 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
+
 import Link from "next/link";
+import Image from "next/image";
 import { FaHeart, FaEye } from "react-icons/fa";
 import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
+import { getProductById } from "@/app/store/productsSlice";
+import React, { useEffect, useState } from "react";
 import { useCart } from "@/app/components/contexts/CartContext";
 import { useFavorites } from "@/app/components/contexts/FavoritesContext";
-import { getProductById } from "@/app/store/productsSlice";
 import { DeliveryInfo } from "@/app/components/ui";
 
 const ProductPage = () => {

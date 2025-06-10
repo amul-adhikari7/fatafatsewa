@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/api/*": ["src/app/api/*"],
+      "@/components/*": ["src/app/components/*"],
+      "@/contexts/*": ["src/app/components/contexts/*"],
+      "@/features/*": ["src/app/components/features/*"],
+      "@/layout/*": ["src/app/components/layout/*"],
+      "@/sections/*": ["src/app/components/sections/*"],
+      "@/ui/*": ["src/app/components/ui/*"],
+      "@/store/*": ["src/app/store/*"],
+      "@/theme/*": ["src/app/theme/*"],
+      "@/types/*": ["src/app/types/*"]
+    },
+    "jsx": "preserve",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}

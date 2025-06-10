@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { FaHeart } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { useFavorites } from "@/app/components/contexts/FavoritesContext";
-import { useCart } from "@/app/components/contexts/CartContext";
+import { useFavorites } from "../../../components/contexts/FavoritesContext";
+import { useCart } from "../../../components/contexts/CartContext";
 import { IoGitCompareOutline } from "react-icons/io5";
 import { MdOutlinePreview } from "react-icons/md";
 
