@@ -1,19 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { FaTimes, FaBars } from "react-icons/fa";
 
 // Components
 import {
   Logo,
   MenuToggle,
-  SearchBar,
   DesktopNav,
   MobileNav,
   MobileMenu,
 } from "./navigation";
+import SearchBar from "./navigation/SearchBar";
 import AuthModal from "../features/auth/AuthModal";
 import CartModal from "../features/cart/CartModal";
 
@@ -22,10 +19,6 @@ import { useCart } from "../contexts/CartContext";
 import { useFavorites } from "../contexts/FavoritesContext";
 import { useAuth } from "../contexts/AuthContext";
 
-/**
- * Main navigation component for the application
- * Handles both desktop and mobile layouts
- */
 const Navbar = () => {
   // State Management
   const [menuOpen, setMenuOpen] = useState(false);
@@ -46,56 +39,51 @@ const Navbar = () => {
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="flex flex-col lg:flex-row items-center py-2 lg:py-4 gap-3 lg:gap-8">
             <div className="w-full lg:w-auto flex items-center justify-between">
-              {/* Mobile Menu Toggle */}
               <MenuToggle
                 isOpen={menuOpen}
-                onClick={() => setMenuOpen(!menuOpen)}
+                onToggle={() => setMenuOpen(!menuOpen)}
               />
-
-              {/* Logo */}
               <Logo />
-
-              {/* Spacer for mobile layout balance */}
               <div className="lg:hidden w-10" />
             </div>
 
-            {/* Search Bar - Desktop */}
             <div className="hidden lg:block flex-1 max-w-2xl w-full">
-              <SearchBar isOpen={isSearchOpen} onOpenChange={setIsSearchOpen} />
+              <SearchBar />
             </div>
 
-            {/* Desktop Navigation */}
             <DesktopNav
-              user={user}
               isAuthenticated={isAuthenticated}
+              user={user}
+              logout={logout}
+              setIsAuthModalOpen={setIsAuthModalOpen}
+              favorites={favorites}
               cartItemsCount={cartItemsCount}
-              favoritesCount={favorites.length}
-              onAuthClick={() => setIsAuthModalOpen(true)}
-              onCartClick={() => setIsCartOpen(true)}
-              onLogout={logout}
-            />
-
-            {/* Mobile Navigation */}
-            <MobileNav
-              isSearchOpen={isSearchOpen}
-              setIsSearchOpen={setIsSearchOpen}
-              cartItemsCount={cartItemsCount}
-              favoritesCount={favorites.length}
-              onCartClick={() => setIsCartOpen(true)}
             />
           </div>
         </div>
-
-        {/* Mobile Menu */}
-        <MobileMenu
-          isOpen={menuOpen}
-          user={user}
-          isAuthenticated={isAuthenticated}
-          onAuthClick={() => setIsAuthModalOpen(true)}
-          onLogout={logout}
-          onClose={() => setMenuOpen(false)}
-        />
       </header>
+
+      <MobileNav
+        isSearchOpen={isSearchOpen}
+        setIsSearchOpen={setIsSearchOpen}
+        isAuthenticated={isAuthenticated}
+        setMenuOpen={setMenuOpen}
+        setIsAuthModalOpen={setIsAuthModalOpen}
+        favorites={favorites}
+        cartItemsCount={cartItemsCount}
+      />
+
+      <MobileMenu
+        menuOpen={menuOpen}
+        setMenuOpen={setMenuOpen}
+        isAuthenticated={isAuthenticated}
+        user={user}
+        logout={logout}
+        setIsAuthModalOpen={setIsAuthModalOpen}
+      />
+
+      {/* Bottom spacer for mobile navigation */}
+      <div className="lg:hidden h-16" />
 
       {/* Modals */}
       <AuthModal
