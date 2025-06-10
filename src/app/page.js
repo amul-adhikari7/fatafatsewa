@@ -15,6 +15,8 @@ import {
 } from "./components/features";
 import { CartProvider } from "./components/contexts/CartContext";
 import { FavoritesProvider } from "./components/contexts/FavoritesContext";
+import SecondBanner from "./components/sections/secondBanner";
+import Gadgets from "./components/features/products/Gadgets";
 export default function Home() {
   return (
     <CartProvider>
@@ -22,12 +24,15 @@ export default function Home() {
         <MainLayout>
           <Banner />
           <NewArrivals />
-          <CategoryPanel />
+          <SecondBanner />
+          <Gadgets />
           <Laptops />
-          <MobilePhone />
           <NewOffers />
-          <HomeAppliances />
+          <MobilePhone />
+          <SecondBanner />
+
           <GamingAccessories2024 />
+          <HomeAppliances />
           <LatestBlogs />
         </MainLayout>
       </FavoritesProvider>

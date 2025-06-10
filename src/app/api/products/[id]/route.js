@@ -95,20 +95,49 @@ const products = [
 ];
 
 export async function GET(request, { params }) {
-  const { id } = params;
   try {
-    const numericId = parseInt(id);
+    if (!params?.id) {
+      return NextResponse.json(
+        { error: "Product ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const numericId = Number(params.id);
+
+    if (isNaN(numericId)) {
+      return NextResponse.json(
+        { error: "Invalid product ID format" },
+        { status: 400 }
+      );
+    }
+
     const product = products.find((p) => p.id === numericId);
 
     if (!product) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+      return NextResponse.json(
+        {
+          error: "Product not found",
+          message: `No product found with ID: ${numericId}`,
+        },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json(product);
+    return NextResponse.json(
+      {
+        success: true,
+        data: product,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error fetching product:", error);
     return NextResponse.json(
-      { error: "Failed to fetch product" },
+      {
+        error: "Internal server error",
+        message: "Failed to fetch product",
+      },
       { status: 500 }
     );
   }

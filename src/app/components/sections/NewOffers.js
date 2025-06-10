@@ -38,30 +38,30 @@ const CountdownTimer = () => {
   }, []);
 
   return (
-    <div className="flex gap-2 mt-2">
-      <div className="flex flex-col items-center">
-        <span className="text-xl font-bold bg-white rounded px-3 py-1.5 shadow-sm">
+    <div className="flex gap-3 mt-4">
+      <div className="flex flex-col items-center min-w-[80px]">
+        <span className="text-2xl sm:text-3xl font-bold bg-white rounded-lg px-4 py-2 shadow-md w-full text-center">
           {timeLeft.days}
         </span>
-        <span className="text-xs text-gray-600 mt-0.5">Days</span>
+        <span className="text-sm text-white mt-1 font-medium">Days</span>
       </div>
-      <div className="flex flex-col items-center">
-        <span className="text-xl font-bold bg-white rounded px-3 py-1.5 shadow-sm">
+      <div className="flex flex-col items-center min-w-[80px]">
+        <span className="text-2xl sm:text-3xl font-bold bg-white rounded-lg px-4 py-2 shadow-md w-full text-center">
           {timeLeft.hours}
         </span>
-        <span className="text-xs text-gray-600 mt-0.5">Hr</span>
+        <span className="text-sm text-white mt-1 font-medium">Hours</span>
       </div>
-      <div className="flex flex-col items-center">
-        <span className="text-xl font-bold bg-white rounded px-3 py-1.5 shadow-sm">
+      <div className="flex flex-col items-center min-w-[80px]">
+        <span className="text-2xl sm:text-3xl font-bold bg-white rounded-lg px-4 py-2 shadow-md w-full text-center">
           {timeLeft.minutes}
         </span>
-        <span className="text-xs text-gray-600 mt-0.5">Min</span>
+        <span className="text-sm text-white mt-1 font-medium">Minutes</span>
       </div>
-      <div className="flex flex-col items-center">
-        <span className="text-xl font-bold bg-white rounded px-3 py-1.5 shadow-sm">
+      <div className="flex flex-col items-center min-w-[80px]">
+        <span className="text-2xl sm:text-3xl font-bold bg-white rounded-lg px-4 py-2 shadow-md w-full text-center">
           {timeLeft.seconds}
         </span>
-        <span className="text-xs text-gray-600 mt-0.5">Sc</span>
+        <span className="text-sm text-white mt-1 font-medium">Seconds</span>
       </div>
     </div>
   );
@@ -106,6 +106,40 @@ const appleProducts = [
 ];
 
 const NewOffers = () => {
+  const [currentPage, setCurrentPage] = useState(0);
+  const [containerRef, setContainerRef] = useState(null);
+  const itemsPerPage = 2; // Show 2 items in mobile view
+  const totalPages = Math.ceil(appleProducts.length / itemsPerPage);
+
+  // Track scroll position for active dot
+  const handleScroll = () => {
+    if (containerRef) {
+      const scrollLeft = containerRef.scrollLeft;
+      const itemWidth = containerRef.clientWidth; // Full container width since we show 2 items
+      const newPage = Math.round(scrollLeft / itemWidth);
+      setCurrentPage(newPage);
+    }
+  };
+
+  useEffect(() => {
+    const container = containerRef;
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
+      return () => container.removeEventListener("scroll", handleScroll);
+    }
+  }, [containerRef]);
+
+  // Scroll to page
+  const goToPage = (pageNumber) => {
+    if (containerRef) {
+      const itemWidth = containerRef.clientWidth;
+      containerRef.scrollTo({
+        left: pageNumber * itemWidth,
+        behavior: "smooth",
+      });
+      setCurrentPage(pageNumber);
+    }
+  };
   return (
     <section className="w-full bg-gradient-to-b from-orange-200 via-blue-300 to-blue-400 py-6">
       <div className="max-w-7xl mx-auto px-4">
@@ -119,7 +153,6 @@ const NewOffers = () => {
               style={{ objectFit: "contain" }}
             />
           </div>
-
           {/* Right side - Content */}
           <div>
             {" "}
@@ -135,38 +168,60 @@ const NewOffers = () => {
                 Go Shopping
               </button>
             </Link>
-          </div>
+          </div>{" "}
         </div>
 
         {/* Product Grid */}
-        <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          {appleProducts.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white rounded-lg p-3 flex flex-col items-center hover:shadow transition-shadow">
-              <div className="relative w-full aspect-square mb-2">
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  style={{ objectFit: "contain" }}
-                />
-              </div>
-              <div className="flex items-center gap-0.5 mb-1">
-                {[...Array(product.rating)].map((_, i) => (
-                  <span key={i} className="text-yellow-400 text-xs">
-                    ★
+        <div className="mt-6 relative">
+          {" "}
+          <div
+            ref={setContainerRef}
+            className="overflow-x-auto overscroll-x-contain hide-scrollbar -mx-3 px-3 scroll-smooth snap-x snap-mandatory">
+            <div className="flex sm:grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {appleProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className="bg-white rounded-lg p-3 flex-shrink-0 w-[calc(50%-6px)] sm:w-auto flex flex-col items-center hover:shadow transition-shadow snap-start">
+                  <div className="relative w-full aspect-square mb-2">
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      style={{ objectFit: "contain" }}
+                    />
+                  </div>
+                  <div className="flex items-center gap-0.5 mb-1">
+                    {[...Array(product.rating)].map((_, i) => (
+                      <span key={i} className="text-yellow-400 text-xs">
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                  <h3 className="text-xs font-semibold text-center mb-0.5">
+                    {product.name}
+                  </h3>
+                  <span className="text-blue-600 font-bold text-sm">
+                    ${product.price}
                   </span>
-                ))}
-              </div>
-              <h3 className="text-xs font-semibold text-center mb-0.5">
-                {product.name}
-              </h3>
-              <span className="text-blue-600 font-bold text-sm">
-                ${product.price}
-              </span>
+                </div>
+              ))}{" "}
             </div>
-          ))}
+          </div>
+          {/* Pagination dots - Mobile only */}
+          <div className="flex justify-center gap-2 mt-4 sm:hidden">
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => goToPage(i)}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  currentPage === i
+                    ? "bg-orange-500 w-4"
+                    : "bg-gray-300 hover:bg-gray-400"
+                }`}
+                aria-label={`Go to page ${i + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

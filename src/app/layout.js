@@ -21,8 +21,13 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${poppins.variable} ${dmSans.variable}`}>
-      <body className={poppins.className}>
+    <html
+      lang="en"
+      className={`${poppins.variable} ${dmSans.variable}`}
+      data-theme="light"
+      style={{ colorScheme: "light" }}
+    >
+      <body className="chakra-ui-light">
         <Providers>{children}</Providers>
       </body>
     </html>

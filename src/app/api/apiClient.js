@@ -38,14 +38,36 @@ export const fetchProducts = async (page = 1, pageSize = 20) => {
         limit: pageSize,
       },
     });
+
+    if (!response?.data) {
+      throw new Error("Invalid response format");
+    }
+
+    // Transform and validate the data
+    const transformedData = Array.isArray(response.data) ? response.data : [];
+
     return {
-      data: response.data,
-      totalPages: 218, // As per your mention
+      data: transformedData.map((item) => ({
+        id: parseInt(item.id) || item.id,
+        name: item.name || "",
+        description: item.description || "",
+        price: parseFloat(String(item.price).replace(/[^\d.]/g, "")) || 0,
+        oldPrice: item.oldPrice
+          ? parseFloat(String(item.oldPrice).replace(/[^\d.]/g, ""))
+          : null,
+        image: item.image || "",
+        tag: item.tag || null,
+        category: item.category || "",
+        processor: item.processor || "",
+        ram: item.ram || "",
+        storage: item.storage || "",
+      })),
+      totalPages: 218, // This should come from your API
       currentPage: page,
     };
   } catch (error) {
-    console.error("Failed to fetch products:", error);
-    return null;
+    console.error("Error fetching products:", error);
+    throw error;
   }
 };
 

@@ -11,9 +11,28 @@ const Banner = () => {
     { id: 1, image: "/assets/home-banner.jpg", alt: "Banner 1" },
     { id: 2, image: "/assets/home-banner-2.jpg", alt: "Banner 2" },
     { id: 3, image: "/assets/home-banner-3.jpg", alt: "Banner 3" },
-  ];
-
+  ]; // Effect for autoplay and image preloading
   useEffect(() => {
+    // Create image objects and start loading them
+    const imagePromises = [
+      ...banners.map((banner) => banner.image),
+      "/assets/side-banner.jpg",
+      "/assets/bottom-banner-1.jpg",
+      "/assets/bottom-banner-2.jpg",
+    ].map((src) => {
+      return new Promise((resolve, reject) => {
+        const img = new HTMLImageElement();
+        img.src = src;
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+    });
+
+    // Load all images in parallel
+    Promise.all(imagePromises).catch((error) => {
+      console.warn("Error preloading some images:", error);
+    });
+
     let interval;
     if (autoPlay) {
       interval = setInterval(() => {
@@ -27,12 +46,10 @@ const Banner = () => {
     setCurrentSlide((prev) => (prev + 1) % banners.length);
     setAutoPlay(false);
   };
-
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length);
     setAutoPlay(false);
   };
-
   return (
     <section className="w-full bg-gradient-to-b from-blue-50/50 to-white py-4">
       <div className="container mx-auto px-4 max-w-7xl">
@@ -102,10 +119,12 @@ const Banner = () => {
           <div className="grid grid-rows-2 gap-3">
             {/* Top Large Banner */}
             <div className="relative rounded-2xl overflow-hidden shadow-lg h-[220px]">
+              {" "}
               <Image
                 src="/assets/side-banner.jpg"
                 alt="iPhone 16 Series"
                 fill
+                priority={true}
                 className="object-cover transform hover:scale-105 transition-transform duration-300"
                 sizes="(max-width: 1024px) 100vw, 25vw"
               />
@@ -122,6 +141,7 @@ const Banner = () => {
                     src={`/assets/bottom-banner-${num}.jpg`}
                     alt={`Bottom Banner ${num}`}
                     fill
+                    priority={true}
                     className="object-cover transform hover:scale-105 transition-transform duration-300"
                     sizes="(max-width: 1024px) 100vw, 25vw"
                   />

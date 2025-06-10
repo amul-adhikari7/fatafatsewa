@@ -2,11 +2,13 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FaTimes, FaTrash, FaMinus, FaPlus } from "react-icons/fa";
 import { useCart } from "../../contexts/CartContext";
 import { FaShoppingCart } from "react-icons/fa";
 const CartModal = ({ isOpen, onClose }) => {
   const { cart, removeFromCart, updateQuantity, cartTotal } = useCart();
+  const router = useRouter();
 
   if (!isOpen) return null;
 
@@ -121,7 +123,12 @@ const CartModal = ({ isOpen, onClose }) => {
               </Link>
               <button
                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3.5 sm:py-3 px-4 rounded-lg transition-all duration-200 hover:opacity-90 active:scale-[0.98] touch-manipulation"
-                aria-label="Proceed to checkout">
+                aria-label="Proceed to checkout"
+                onClick={() => {
+                  onClose();
+                  // Add any additional logic for proceeding to checkout
+                  router.push("/checkout");
+                }}>
                 Proceed to Checkout
               </button>
             </div>

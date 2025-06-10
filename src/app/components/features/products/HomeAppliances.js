@@ -88,7 +88,7 @@ const HomeAppliances2024 = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-            Home Appliances Of 2024
+            Home Appliances Of 2025
           </h2>
           <button className="bg-blue-100 text-blue-600 text-xs sm:text-sm px-3 sm:px-4 py-1 rounded-full hover:bg-blue-200">
             More Products
@@ -99,7 +99,7 @@ const HomeAppliances2024 = () => {
         {/* Product Cards - Horizontal scroll on mobile */}
         <div className="relative">
           <div className="overflow-x-auto hide-scrollbar -mx-3 px-3 sm:mx-0 sm:px-0">
-            <div className="flex sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
               {visibleAppliances.map((item) => (
                 <div
                   key={item.id}
@@ -116,23 +116,79 @@ const HomeAppliances2024 = () => {
                       }`}>
                       {item.tag}
                     </span>
-                  )}
+                  )}{" "}
                   <div className="flex-1 flex items-center justify-center relative">
+                    {/* Quick Action Overlay */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300 z-10" />
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          router.push(`/product/${item.id}`);
+                        }}
+                        className="p-2 rounded-full bg-white shadow-lg hover:scale-110 transition-transform duration-200"
+                        title="Quick View">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 text-gray-600"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          router.push(`/compare?product=${item.id}`);
+                        }}
+                        className="p-2 rounded-full bg-white shadow-lg hover:scale-110 transition-transform duration-200"
+                        title="Compare">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 text-gray-600"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                          />
+                        </svg>
+                      </button>
+                    </div>
                     <Image
                       src={item.image}
                       alt={item.name}
                       width={200}
                       height={200}
                       className="mx-auto object-contain max-h-36 sm:max-h-48 transform group-hover:scale-105 transition-transform duration-300"
-                    />
+                    />{" "}
                     <button
                       onClick={(e) => {
+                        e.preventDefault();
                         e.stopPropagation();
                         toggleFavorite(item);
                       }}
-                      className="absolute top-0 right-0 p-1.5 sm:p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white shadow-sm opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all z-30 touch-manipulation"
+                      aria-label="Add to favorites">
                       <FaHeart
-                        className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${
+                        className={`w-4 h-4 ${
                           isFavorite(item.id)
                             ? "text-red-500"
                             : "text-gray-400 hover:text-red-500"

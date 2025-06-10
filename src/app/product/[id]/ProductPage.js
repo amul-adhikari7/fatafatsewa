@@ -2,13 +2,13 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaHeart, FaRegHeart, FaEye } from "react-icons/fa";
+import { FaHeart, FaEye } from "react-icons/fa";
 import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { useCart } from "@/app/components/contexts/CartContext";
 import { useFavorites } from "@/app/components/contexts/FavoritesContext";
 import { getProductById } from "@/app/store/productsSlice";
-import { Button, DeliveryInfo } from "@/app/components/ui";
+import { DeliveryInfo } from "@/app/components/ui";
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -22,15 +22,22 @@ const ProductPage = () => {
   const [viewerCount, setViewerCount] = useState(18);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [isSpecsExpanded, setIsSpecsExpanded] = useState(false);
+  const [emiAmount, setEmiAmount] = useState(0);
+
+  const fallbackImage = "/assets/placeholder.png";
+
+  // Handle color selection with visual feedback
+  const handleColorSelect = (index) => {
+    setSelectedColor(index);
+  };
 
   // Generate 4 images for the thumbnails
   const thumbnailImages = Array(4).fill(product?.image);
 
   // Create an array of 4 identical images if no multiple images are provided
-  const baseImageUrl = product?.images?.[0] || product?.image;
+  const baseImageUrl = product?.images?.[0] || product?.image || fallbackImage;
   const productImages =
     product?.images?.length > 0 ? product.images : Array(4).fill(baseImageUrl);
-
   useEffect(() => {
     if (id) {
       dispatch(getProductById(id));
@@ -110,21 +117,39 @@ const ProductPage = () => {
 
   // SKU (simulate if not present)
   const sku = product?.sku || `FS_LP_${product?.id}`;
-
   // Handlers
   const handleAddToCart = () => {
-    addToCart({ ...product, quantity });
+    const selectedColorInfo = availableColors[selectedColor];
+    addToCart({
+      ...product,
+      quantity,
+      selectedColor: selectedColorInfo?.name,
+      colorHex: selectedColorInfo?.hex,
+    });
   };
   const handleBuyNow = () => {
-    addToCart({ ...product, quantity });
+    handleAddToCart();
     window.location.href = "/cart";
   };
+
+  // Add this function to calculate EMI
   const calculateEMI = (price) => {
-    const searchParams = new URLSearchParams();
-    searchParams.set("price", price);
-    searchParams.set("productName", product.name);
-    window.location.href = `/emi-calculator?${searchParams.toString()}`;
+    const annualInterestRate = 11.5;
+    const monthlyInterestRate = annualInterestRate / 12 / 100;
+    const tenure = 12;
+    const emi =
+      (price *
+        monthlyInterestRate *
+        Math.pow(1 + monthlyInterestRate, tenure)) /
+      (Math.pow(1 + monthlyInterestRate, tenure) - 1);
+    return Math.round(emi);
   };
+
+  useEffect(() => {
+    if (product?.price) {
+      setEmiAmount(calculateEMI(product.price));
+    }
+  }, [product]);
 
   if (loading) {
     return (
@@ -141,6 +166,7 @@ const ProductPage = () => {
       </div>
     );
   }
+
   return (
     <div className="bg-white">
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6">
@@ -150,10 +176,10 @@ const ProductPage = () => {
           <div className="flex flex-col items-center">
             <div className="relative w-full flex justify-center">
               <div className="relative w-full h-[400px] sm:h-[500px] bg-white rounded-2xl flex items-center justify-center overflow-hidden group cursor-zoom-in shadow-sm hover:shadow-md transition-shadow">
-                <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white/5" />{" "}
+                <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white/5" />
                 <Image
-                  src={product.image}
-                  alt={product.name}
+                  src={productImages[selectedImage] || fallbackImage}
+                  alt={product?.name || "Product Image"}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   priority
@@ -173,18 +199,17 @@ const ProductPage = () => {
                       ? "border-primary-500 shadow-md"
                       : "border-transparent hover:border-primary-300"
                   }`}>
-                  {" "}
                   <Image
-                    src={product.image}
-                    alt={`${product.name} - View ${index + 1}`}
+                    src={productImages[index] || fallbackImage}
+                    alt={`${product?.name || "Product"} - View ${index + 1}`}
                     fill
                     sizes="(max-width: 640px) 80px, 80px"
                     style={{ objectFit: "cover" }}
                     className="transition-opacity hover:opacity-80"
                   />
                 </button>
-              ))}{" "}
-            </div>{" "}
+              ))}
+            </div>
             {/* Product Description in left column */}
             {product.description && (
               <div className="mt-12 w-full bg-gray-50/50 rounded-xl border border-gray-100">
@@ -264,6 +289,37 @@ const ProductPage = () => {
 
           {/* Right: Product info */}
           <div className="flex flex-col gap-2">
+            {/* Product Information Section */}
+            <div className="mb-2">
+              <table className="min-w-full text-sm text-gray-700">
+                <tbody>
+                  {product.brand && (
+                    <tr>
+                      <td className="pr-2 font-semibold">Brand:</td>
+                      <td>{product.brand}</td>
+                    </tr>
+                  )}
+                  {product.model && (
+                    <tr>
+                      <td className="pr-2 font-semibold">Model:</td>
+                      <td>{product.model}</td>
+                    </tr>
+                  )}
+                  {product.category && (
+                    <tr>
+                      <td className="pr-2 font-semibold">Category:</td>
+                      <td>{product.category}</td>
+                    </tr>
+                  )}
+                  {product.warranty && (
+                    <tr>
+                      <td className="pr-2 font-semibold">Warranty:</td>
+                      <td>{product.warranty}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
             {/* Badges */}
             <div className="flex items-center gap-1.5">
               <span className="inline-flex items-center px-2 py-0.5 rounded bg-blue-100 text-blue-700 text-xs font-medium">
@@ -307,39 +363,50 @@ const ProductPage = () => {
             </h1>{" "}
             {/* Price section */}
             <div className="flex items-center justify-between">
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl sm:text-3xl font-bold text-blue-700">
-                  Rs. {product.price?.toLocaleString()}
-                </span>
-                {hasDiscount && (
-                  <>
-                    <span className="text-base text-gray-400 line-through">
-                      Rs. {product.oldPrice?.toLocaleString()}
-                    </span>
-                    <span className="text-sm text-green-600 font-semibold">
-                      {discountPercent}% OFF
-                    </span>
-                  </>
-                )}
-              </div>{" "}
-              <button
-                onClick={() => calculateEMI(product.price)}
-                className="flex items-center gap-1 px-3 py-1 text-sm text-white font-medium bg-blue-500 hover:bg-blue-600 rounded-lg transition duration-200">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
-                  />
-                </svg>
-                Calculate EMI
-              </button>
+              <div className="space-y-1">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl sm:text-3xl font-bold text-blue-700">
+                    Rs. {product.price?.toLocaleString()}
+                  </span>
+                  {hasDiscount && (
+                    <>
+                      <span className="text-base text-gray-400 line-through">
+                        Rs. {product.oldPrice?.toLocaleString()}
+                      </span>
+                      <span className="text-sm text-green-600 font-semibold">
+                        {discountPercent}% OFF
+                      </span>
+                    </>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">EMI from</span>
+                  <span className="text-base font-semibold text-blue-600">
+                    Rs. {emiAmount?.toLocaleString()}/mo
+                  </span>{" "}
+                  <button
+                    onClick={() => {
+                      window.location.href = `/emi-application?productId=${
+                        product.id
+                      }&price=${product.price}&name=${encodeURIComponent(
+                        product.name
+                      )}`;
+                    }}
+                    className="text-xs py-1.5 px-3 bg-blue-50 border border-blue-200 text-blue-600 rounded-full font-medium hover:bg-blue-100 hover:border-blue-300 transition-all duration-200 flex items-center gap-1">
+                    Apply Now
+                    <svg
+                      className="w-3 h-3"
+                      viewBox="0 0 20 20"
+                      fill="currentColor">
+                      <path
+                        fillRule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
             {/* Quantity section */}
             <div className="mt-4">
@@ -362,23 +429,23 @@ const ProductPage = () => {
                     +
                   </button>
                 </div>
-              </div>
-
+              </div>{" "}
               {/* Colors section */}
-              <div className="flex items-center gap-3 mt-4">
-                <span className="text-sm font-medium text-gray-700">
-                  Colors:
+              <div className="mt-6">
+                <span className="text-sm font-medium text-gray-700 block mb-3">
+                  Select Color:
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {availableColors.map((color, idx) => (
                     <button
                       key={color.name}
-                      onClick={() => setSelectedColor(idx)}
-                      className={`px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-200 ${
-                        selectedColor === idx
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}>
+                      onClick={() => handleColorSelect(idx)}
+                      className={`py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200
+                        ${
+                          selectedColor === idx
+                            ? "bg-blue-50 text-blue-700 border-2 border-blue-500"
+                            : "bg-gray-50 text-gray-700 border border-gray-200 hover:border-blue-500 hover:bg-blue-50"
+                        }`}>
                       {color.name}
                     </button>
                   ))}
@@ -420,16 +487,23 @@ const ProductPage = () => {
                   </span>
                 </div>
               </div>
-            </div>
+            </div>{" "}
             {/* Action buttons */}
-            <div className="mt-6 flex items-center gap-4">
+            <div className="mt-8 flex items-center gap-4">
               <button
-                onClick={() => addToCart(product, quantity)}
-                className="px-6 py-2.5 flex-1 text-white font-medium bg-orange-500 rounded-lg hover:bg-blue-600 transition duration-200">
-                Add to Cart
+                onClick={handleAddToCart}
+                className="px-6 py-3 flex-1 text-white font-medium bg-orange-500 rounded-lg hover:bg-blue-600 transition duration-200 flex items-center justify-center gap-2">
+                {" "}
+                <span>Add to Cart</span>
               </button>{" "}
               <button
-                onClick={handleBuyNow}
+                onClick={() => {
+                  window.location.href = `/emi-application?productId=${
+                    product.id
+                  }&price=${product.price}&name=${encodeURIComponent(
+                    product.name
+                  )}`;
+                }}
                 className="px-6 py-2.5 flex-1 text-white font-medium bg-blue-500 rounded-lg hover:bg-orange-600 transition duration-200">
                 Apply Emi
               </button>
@@ -886,7 +960,7 @@ const ProductPage = () => {
                       </span>
                       {item.oldPrice && (
                         <span className="text-sm text-gray-400 line-through">
-                          Rs {item.oldPrice.toLocaleString()}
+                          Rs {item.oldPrice?.toLocaleString()}
                         </span>
                       )}
                     </div>
