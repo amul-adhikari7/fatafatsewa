@@ -986,7 +986,9 @@ const ProductPage = () => {
               Wishlist
             </button>
             <button
-              onClick={() => window.location.href = `/compare?product=${product.id}`}
+              onClick={() =>
+                (window.location.href = `/compare?product=${product.id}`)
+              }
               className="px-3 py-1 rounded text-xs font-medium bg-gray-50 text-gray-500">
               Compare
             </button>
@@ -1002,9 +1004,11 @@ const ProductPage = () => {
           </button>
           <button
             onClick={() => {
-              window.location.href = `/emi-application?productId=${product.id}&price=${
-                product.price
-              }&name=${encodeURIComponent(product.name)}`;
+              window.location.href = `/emi-application?productId=${
+                product.id
+              }&price=${product.price}&name=${encodeURIComponent(
+                product.name
+              )}`;
             }}
             className="flex-1 bg-orange-500 text-white px-4 py-3 rounded-lg font-medium active:scale-[0.98] transition-transform text-sm">
             Apply EMI

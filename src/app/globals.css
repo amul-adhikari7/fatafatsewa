@@ -6,8 +6,42 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+}
+
+/* Enhanced smooth scrolling for all devices */
+html {
+  scroll-behavior: smooth;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile scroll optimizations */
+@media (max-width: 768px) {
+  html {
+    scroll-padding-top: 1rem;
+    overscroll-behavior-y: none;
+  }
+  
+  body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: none;
+    position: relative;
+    min-height: 100%;
+  }
+}
+
+/* Optimize mobile scrolling */
+body {
+  background-color: rgb(249, 250, 251); /* bg-gray-50 equivalent */
+  -webkit-overflow-scrolling: touch; /* Enables smooth scrolling on iOS */
+  overflow-y: auto;
+  overscroll-behavior-y: none; /* Prevents pull-to-refresh */
+  position: relative;
+  min-height: 100%;
   scroll-behavior: smooth;
 }
+
 /* Hide scrollbar visually but retain scroll functionality */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
@@ -25,10 +59,6 @@
 
 .hide-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
-}
-
-body {
-  @apply bg-gray-50;
 }
 
 .btn-primary {
