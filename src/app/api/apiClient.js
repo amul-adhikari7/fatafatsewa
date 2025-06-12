@@ -1,14 +1,98 @@
 import axios from "axios";
+import { ComputeCache, RequestThrottler } from "../utils/performance";
 
+// Create axios instance with default config
 const API = axios.create({
-  baseURL: "https://fatafatsewa.com/api/v1", // Updated base URL
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://fatafatsewa.com/api/v1",
+  timeout: 10000,
   headers: {
-    "API-Key": "pk_live_JswWSUmBs6fvt1rRpayAULTNQUfxZZ3I",
+    "API-key": "pk_live_JswWSUmBs6fvt1rRpayAULTNQUfxZZ3I",
     "Content-Type": "application/json",
   },
 });
 
-export default API;
+// Add request interceptor for authentication and caching
+API.interceptors.request.use(
+  async (config) => {
+    // Check cache for GET requests
+    if (config.method === "get") {
+      const cacheKey = `${config.url}${JSON.stringify(config.params || {})}`;
+      const cachedData = ComputeCache.get(cacheKey);
+      if (cachedData) {
+        return Promise.reject({
+          config,
+          response: { data: cachedData },
+          __CACHED: true,
+        });
+      }
+    }
+
+    // Add auth header if available
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Add response interceptor for caching and error handling
+API.interceptors.response.use(
+  (response) => {
+    // Cache successful GET requests
+    if (response.config.method === "get") {
+      const cacheKey = `${response.config.url}${JSON.stringify(
+        response.config.params || {}
+      )}`;
+      ComputeCache.set(cacheKey, response.data);
+    }
+    return response;
+  },
+  async (error) => {
+    // Return cached data if available
+    if (error.__CACHED) {
+      return error.response;
+    }
+
+    // Handle expired token
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+      return Promise.reject(error);
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+// Create wrapped API methods with throttling
+const wrappedAPI = {
+  async get(url, config = {}) {
+    return RequestThrottler.throttle(`GET:${url}`, () => API.get(url, config));
+  },
+
+  async post(url, data, config = {}) {
+    return RequestThrottler.throttle(`POST:${url}`, () =>
+      API.post(url, data, config)
+    );
+  },
+
+  async put(url, data, config = {}) {
+    return RequestThrottler.throttle(`PUT:${url}`, () =>
+      API.put(url, data, config)
+    );
+  },
+
+  async delete(url, config = {}) {
+    return RequestThrottler.throttle(`DELETE:${url}`, () =>
+      API.delete(url, config)
+    );
+  },
+};
+
+export default wrappedAPI;
 
 // Laptop IDs array - you can update this with your actual laptop IDs
 export const LAPTOP_IDS = [

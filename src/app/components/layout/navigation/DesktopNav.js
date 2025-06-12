@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { FaUser, FaHeart, FaSignOutAlt } from "react-icons/fa";
 import { CartIcon } from "./NavigationIcons";
@@ -11,22 +12,45 @@ const DesktopNav = ({
   isAuthenticated,
   user,
   logout,
-  setIsAuthModalOpen,
+  onAuthClick,
   cartItemsCount = 0,
   favoritesCount = 0,
 }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <nav className="hidden lg:flex items-center gap-4">
+    <nav className="items-center hidden gap-4 lg:flex">
       {/* Account/Auth */}
       {isAuthenticated ? (
-        <div className="relative group">
-          <button className="flex items-center gap-2 p-2.5 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all">
+        <div className="relative" ref={menuRef}>
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className={`flex items-center gap-2 p-2.5 text-gray-700 rounded-lg transition-all ${
+              isMenuOpen
+                ? "bg-gray-50 text-blue-600"
+                : "hover:text-blue-600 hover:bg-gray-50"
+            }`}>
             <FaUser className="w-6 h-6" />
-            <span className="hidden sm:block text-sm font-medium">
+            <span className="hidden text-sm font-medium sm:block">
               {user?.name || "Account"}
             </span>
           </button>
-          <div className="hidden group-hover:block absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-100 py-2 w-48 z-50">
+          <div
+            className={`${
+              isMenuOpen ? "block" : "hidden"
+            } absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-100 py-2 w-48 z-50`}>
             <Link
               href="/account"
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
@@ -39,7 +63,7 @@ const DesktopNav = ({
             </Link>
             <button
               onClick={logout}
-              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+              className="flex items-center w-full gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
               <FaSignOutAlt className="w-4 h-4" />
               Sign Out
             </button>
@@ -47,7 +71,7 @@ const DesktopNav = ({
         </div>
       ) : (
         <button
-          onClick={() => setIsAuthModalOpen(true)}
+          onClick={onAuthClick}
           className="flex items-center gap-2 p-2.5 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all"
           aria-label="Sign in">
           <FaUser className="w-6 h-6" />
@@ -63,7 +87,7 @@ const DesktopNav = ({
         <div className="relative">
           <FaHeart className="w-6 h-6" />
           {favoritesCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+            <span className="absolute flex items-center justify-center w-4 h-4 text-xs text-white bg-red-500 rounded-full -top-1 -right-1">
               {favoritesCount}
             </span>
           )}

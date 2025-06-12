@@ -33,19 +33,20 @@ const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // Context Hooks
-  const { cartItemsCount, isCartOpen, setIsCartOpen } = useCart();
+  const { cart, isCartOpen, setIsCartOpen } = useCart();
   const { getFavoriteProducts } = useFavorites();
   const { user, isAuthenticated, logout } = useAuth();
 
   // Derived State
   const favorites = getFavoriteProducts();
+  const cartItemsCount = cart?.length || 0;
 
   return (
     <>
-      <header className="bg-white shadow-sm sticky top-0 z-40">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <div className="flex flex-col lg:flex-row items-center py-2 lg:py-4 gap-3 lg:gap-8">
-            <div className="w-full lg:w-auto flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-white shadow-sm">
+        <div className="container px-4 mx-auto max-w-7xl">
+          <div className="flex flex-col items-center gap-3 py-2 lg:flex-row lg:py-4 lg:gap-8">
+            <div className="flex items-center justify-between w-full lg:w-auto">
               {/* Mobile Menu Toggle */}
               <MenuToggle
                 isOpen={menuOpen}
@@ -65,7 +66,7 @@ const Navbar = () => {
             </div>
 
             {/* Search Bar - Desktop */}
-            <div className="hidden lg:block flex-1 max-w-2xl w-full">
+            <div className="flex-1 hidden w-full max-w-2xl lg:block">
               <SearchBar isOpen={isSearchOpen} onOpenChange={setIsSearchOpen} />
             </div>
 

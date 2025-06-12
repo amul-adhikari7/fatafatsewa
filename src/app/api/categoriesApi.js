@@ -2,7 +2,7 @@ import API from "./apiClient";
 
 export const fetchCategories = async () => {
   try {
-    const response = await API.get("/categories");
+    const response = await API.get("/categories/parents");
     // Handle the API response structure
     const categories = response.data?.categories || [];
 

@@ -2,13 +2,14 @@ import Link from "next/link";
 import Image from "next/image";
 
 const Logo = () => (
-  <Link href="/" className="flex-shrink-0">
+  <Link href="/" className="block flex-shrink-0 w-[120px] h-[32px] sm:h-[40px]">
     <Image
       src="/assets/logo.svg"
       alt="Fatafat Logo"
       width={120}
       height={40}
-      className="h-8 sm:h-10 w-auto transform hover:scale-105 transition-transform"
+      priority
+      className="w-full h-full transition-transform transform hover:scale-105"
     />
   </Link>
 );

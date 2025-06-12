@@ -30,59 +30,57 @@ const CategoryPanel = () => {
   }
 
   if (error) {
-    return <div className="text-center text-red-500 py-4">{error}</div>;
+    return (
+      <div className="min-h-[200px] flex items-center justify-center text-red-500">
+        {error}
+      </div>
+    );
   }
 
-  // Filter featured root categories and sort by order
-  const displayCategories = (categories || [])
-    .filter((category) => !category.parentId && category.featured)
-    .sort((a, b) => a.order - b.order)
-    .slice(0, 4)
-    .map((category) => ({
-      id: category.id,
-      title: category.name,
-      image: category.imageUrl,
-      slug: category.slug,
-      productCount: category.featured ? "Featured" : "Available",
-    }));
+  if (!categories?.length) {
+    return null;
+  }
 
   return (
-    <section className="py-8 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Popular Categories</h2>
-          <Link
-            href="/categories"
-            className="text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1">
-            View All
-            <FaChevronRight className="w-4 h-4" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {displayCategories.map((category) => (
+    <section className="py-8">
+      <div className="container px-4 mx-auto">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">
+          Browse Categories
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+          {categories.map((category) => (
             <Link
-              href={`/category/${category.slug}`}
               key={category.id}
-              className="transform hover:scale-105 transition-transform duration-200">
-              <Card hover className="h-full">
-                <div className="relative aspect-[4/3]">
-                  {category.image && (
-                    <Image
-                      src={category.image}
-                      alt={category.title}
-                      fill
-                      className="object-cover rounded-t-xl"
-                    />
+              href={`/category/${category.slug}`}
+              className="group">
+              <Card className="h-full transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+                <div className="p-4 flex flex-col items-center text-center gap-3">
+                  {category.imageUrl ? (
+                    <div className="w-16 h-16 rounded-full bg-gray-100 overflow-hidden">
+                      <Image
+                        src={category.imageUrl}
+                        alt={category.name}
+                        width={64}
+                        height={64}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                      <span className="text-xl font-semibold text-blue-600">
+                        {category.name.charAt(0)}
+                      </span>
+                    </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-t-xl" />
-                  <div className="absolute bottom-0 left-0 right-0 p-3">
-                    <h3 className="text-white font-semibold">
-                      {category.title}
+                  <div>
+                    <h3 className="font-medium text-gray-800 group-hover:text-blue-600 transition-colors">
+                      {category.name}
                     </h3>
-                    <p className="text-xs text-white/80">
-                      {category.productCount}
-                    </p>
+                    {category.productCount && (
+                      <p className="text-sm text-gray-500 mt-1">
+                        {category.productCount} Products
+                      </p>
+                    )}
                   </div>
                 </div>
               </Card>

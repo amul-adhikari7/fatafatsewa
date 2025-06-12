@@ -14,20 +14,28 @@ html {
   height: 100%;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: none;
+  touch-action: manipulation;
 }
 
 /* Mobile scroll optimizations */
 @media (max-width: 768px) {
   html {
     scroll-padding-top: 1rem;
-    overscroll-behavior-y: none;
+    overscroll-behavior: none;
+    touch-action: manipulation;
   }
   
   body {
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: none;
+    overscroll-behavior: none;
     position: relative;
     min-height: 100%;
+    touch-action: pan-y pinch-zoom;
+  }
+  
+  * {
+    touch-action: pan-x pan-y;
   }
 }
 
@@ -153,4 +161,94 @@ body {
 .scrollbar-hide {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+}
+
+/* Enhanced touch handling for mobile devices */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  touch-action: pan-y pinch-zoom;
+}
+
+/* Prevent content selection during touch scroll */
+.prevent-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Touch optimization utilities */
+.touch-action-manipulation {
+  touch-action: manipulation;
+}
+
+.touch-action-pan-y {
+  touch-action: pan-y;
+}
+
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Enhanced touch scrolling utilities */
+.touch-scroll-container {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  touch-action: pan-x pan-y pinch-zoom;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+}
+
+/* Snap scroll container */
+.snap-scroll-container {
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 1rem;
+}
+
+.snap-scroll-item {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* Touch target size improvements */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Prevent text selection during scroll */
+.no-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    scroll-behavior: smooth;
+  }
+
+  .product-card {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+  }
+
+  .scroll-container {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
 }
